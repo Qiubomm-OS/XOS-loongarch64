@@ -10,7 +10,10 @@ CC = /opt/cross-tools/bin/loongarch64-unknown-linux-gnu-gcc
 LD = /opt/cross-tools/bin/loongarch64-unknown-linux-gnu-ld
 ASM = nasm
 
-C_FLAGS = -I ./include/ -c -fno-builtin -m32 -fno-stack-protector -nostdinc -fno-pic -gdwarf-2
+C_FLAGS = -nostdinc -I./arch/loongarch/include -I./include -I./arch/loongarch/include/uapi \
+	-I./include/uapi -D__KERNEL__ -DVMLINUX_LOAD_ADDRESS=0x9000000000200000 \
+	-fno-PIE -mabi=lp64s -G0 -pipe -msoft-float -mexplicit-relocs \
+	-ffreestanding -mno-check-zero-division -c
 LD_FLAGS = -m elf_i386 -T ./script/kernel.ld -Map ./build/kernel.map -nostdlib
 ASM_FLAGS = -f elf -g -F stabs
 
@@ -22,7 +25,6 @@ all: $(S_OBJECTS) $(C_OBJECTS) link update_image
 
 .S.o:
 	@echo 编译汇编文件 $< ...
-	# $(ASM) $(ASM_FLAGS) $< -o $@
 	$(CC) $(C_FLAGS) $< -o $@
 
 link:

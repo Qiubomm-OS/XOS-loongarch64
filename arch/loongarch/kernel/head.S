@@ -1,3 +1,4 @@
+#include <linux/init.h>
 #include <linux/linkage.h>
 
 #include <asm/loongarch.h>

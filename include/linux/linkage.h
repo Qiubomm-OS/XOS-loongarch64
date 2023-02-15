@@ -58,4 +58,6 @@
 #define SYM_DATA_END(name)				\
 	SYM_END(name, SYM_T_OBJECT)
 
+#endif
+
 #endif /* _LINUX_LINKAGE_H */
