@@ -1,6 +1,8 @@
 #ifndef _LINUX_TYPES_H
 #define _LINUX_TYPES_H
 
+#define NULL ((void*)0)
+
 typedef enum {
     FALSE = 0,
     TRUE = 1
