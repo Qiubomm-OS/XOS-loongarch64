@@ -19,7 +19,19 @@ static __always_inline void __write_once_size(volatile void *p, void *res, int s
 	case 2: *(__u16_alias_t *) res = *(volatile __u16_alias_t *) p; break;
 	case 4: *(__u32_alias_t *) res = *(volatile __u32_alias_t *) p; break;
 	case 8: *(__u64_alias_t *) res = *(volatile __u64_alias_t *) p; break;
+	default:
+		barrier();
+		__builtin_memcpy((void *)res, (const void *)p, size);
+		barrier();
 	}
 }
+
+#define WRITE_ONCE(x, val)				\
+({							\
+	union { typeof(x) __val; char __c[1]; } __u =	\
+		{ .__val = (val) }; 			\
+	__write_once_size(&(x), __u.__c, sizeof(x));	\
+	__u.__val;					\
+})
 
 #endif /* _LINUX_VOMPILER_H */

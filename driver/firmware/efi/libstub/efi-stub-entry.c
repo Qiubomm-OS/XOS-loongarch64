@@ -1,5 +1,6 @@
 #include <linux/efi.h>
 #include <linux/types.h>
+#include <linux/compiler.h>
 
 #include "efistub.h"
 
@@ -14,4 +15,18 @@ efi_status_t efi_pe_entry(efi_handle_t handle, efi_system_table_t *systab)
 	efi_guid_t loaded_image_proto = LOADED_IMAGE_PROTOCOL_GUID;
 	unsigned long reserve_addr = 0;
 	unsigned long reserve_size = 0;
+
+	WRITE_ONCE(efi_system_table, systab);
+
+	/* Check if we were booted by the EFI firmware */
+	if (efi_system_table->hdr.signature != EFI_SYSTEM_TABLE_SIGNATURE)
+		return EFI_INVALID_PARAMETER;
+	
+	/*
+	 * Get a handle to the loaded image protocol.  This is used to get
+	 * information about the running image, such as size and the command
+	 * line.
+	 */
+	status = efi_bs_call(handle_protocol, handle, &loaded_image_proto,
+			     (void *)&image);
 }
