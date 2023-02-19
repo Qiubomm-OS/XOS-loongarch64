@@ -5,6 +5,8 @@
 
 #include "efi-head.S"
 
+	__HEAD
+	
 _head:
 	.word MZ_MAGIC
 	.org	0x8

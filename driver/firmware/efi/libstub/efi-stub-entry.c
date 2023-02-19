@@ -2,10 +2,11 @@
 #include <linux/types.h>
 #include <linux/compiler.h>
 #include <linux/printk.h>
+#include <linux/string.h>
 
 #include "efistub.h"
 
-efi_status_t efi_pe_entry(efi_handle_t handle, efi_system_table_t *systab)
+efi_status_t __efiapi efi_pe_entry(efi_handle_t handle, efi_system_table_t *systab)
 {	
 	efi_loaded_image_t *image;
 	efi_status_t status;
@@ -17,7 +18,10 @@ efi_status_t efi_pe_entry(efi_handle_t handle, efi_system_table_t *systab)
 	unsigned long reserve_addr = 0;
 	unsigned long reserve_size = 0;
 
-	WRITE_ONCE(efi_system_table, systab);
+	// WRITE_ONCE(efi_system_table, systab);
+	__builtin_memcpy(&efi_system_table, systab, sizeof(efi_system_table));
+
+	efi_puts("hello world!!!\n");
 
 	/* Check if we were booted by the EFI firmware */
 	if (efi_system_table->hdr.signature != EFI_SYSTEM_TABLE_SIGNATURE)
@@ -31,4 +35,5 @@ efi_status_t efi_pe_entry(efi_handle_t handle, efi_system_table_t *systab)
 	status = efi_bs_call(handle_protocol, handle, &loaded_image_proto,
 			     (void *)&image);
 	efi_puts("hello world!\n");
+	while(1);
 }

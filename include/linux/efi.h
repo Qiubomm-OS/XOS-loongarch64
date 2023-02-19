@@ -5,6 +5,8 @@
 #include <linux/compiler_attributes.h>
 #include <linux/range.h>
 
+#define __efiapi
+
 #define EFI_SUCCESS		0
 #define EFI_LOAD_ERROR		( 1 | (1UL << (BITS_PER_LONG-1)))
 #define EFI_INVALID_PARAMETER	( 2 | (1UL << (BITS_PER_LONG-1)))

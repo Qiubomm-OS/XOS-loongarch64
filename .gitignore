@@ -4,7 +4,8 @@ cmake-build-debug/
 hdisk/
 a.out
 hd.img
-kernel.bin
+kernel
+kernel.efi
 test.c
 test.s
 *.o

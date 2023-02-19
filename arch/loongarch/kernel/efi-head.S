@@ -20,7 +20,7 @@
 	.long	__inittext_end - .Lefi_header_end	/* SizeOfCode */
 	.long	_end - __initdata_begin			/* SizeOfInitializedData */
 	.long	0					/* SizeOfUninitializedData */
-	.long	__efistub_efi_pe_entry - _head		/* AddressOfEntryPoint */
+	.long	efi_pe_entry - _head			/* AddressOfEntryPoint */
 	.long	.Lefi_header_end - _head		/* BaseOfCode */
 
 .Lextra_header_fields:

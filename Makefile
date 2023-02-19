@@ -8,13 +8,14 @@ S_OBJECTS = $(patsubst %.S, %.o, $(S_SOURCES))
 
 CC = /opt/cross-tools/bin/loongarch64-unknown-linux-gnu-gcc
 LD = /opt/cross-tools/bin/loongarch64-unknown-linux-gnu-ld
+OBJCOPY = /opt/cross-tools/bin/loongarch64-unknown-linux-gnu-objcopy
 ASM = nasm
 
 C_FLAGS = -nostdinc -I./arch/loongarch/include -I./include -I./arch/loongarch/include/uapi \
-	-I./include/uapi -D__KERNEL__ -DVMLINUX_LOAD_ADDRESS=0x9000000000200000 \
-	-fno-PIE -mabi=lp64s -G0 -pipe -msoft-float -mexplicit-relocs \
-	-ffreestanding -mno-check-zero-division -c
-LD_FLAGS = -m elf64loongarch -z noexecstack --no-warn-rwx-segments -r -T ./arch/loongarch/kernel/vmlinux.lds -Map ./build/kernel.map -nostdlib
+	-I./include/uapi -DVMLINUX_LOAD_ADDRESS=0x9000000000200000 \
+	-mabi=lp64s -G0 -pipe -msoft-float -mexplicit-relocs \
+	-c -g
+LD_FLAGS = -m elf64loongarch --no-warn-rwx-segments -T ./arch/loongarch/kernel/vmlinux.lds -Map ./build/kernel.map -G0 -static -n -nostdlib
 ASM_FLAGS = -f elf -g -F stabs
 
 all: $(S_OBJECTS) $(C_OBJECTS) link
@@ -29,11 +30,14 @@ all: $(S_OBJECTS) $(C_OBJECTS) link
 
 link:
 	@echo 链接内核文件...
-	$(LD) $(LD_FLAGS) $(S_OBJECTS) $(C_OBJECTS) -o kernel.bin
+	$(LD) $(LD_FLAGS) $(S_OBJECTS) $(C_OBJECTS) -o kernel
+	$(OBJCOPY) -O binary --remove-section=.comment --remove-section=.note \
+		--remove-section=.options --remove-section=.note.gnu.build-id \
+		-S kernel kernel.efi
 
 .PHONY:clean
 clean:
-	$(RM) $(S_OBJECTS) $(C_OBJECTS) kernel.bin
+	$(RM) $(S_OBJECTS) $(C_OBJECTS) kernel kernel.efi
 
 .PHONY:update_image
 
