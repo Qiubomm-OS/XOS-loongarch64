@@ -44,4 +44,6 @@ static inline const char *printk_skip_headers(const char *buffer)
 #define CONSOLE_LOGLEVEL_DEBUG	10 /* issue debug messages */
 #define CONSOLE_LOGLEVEL_MOTORMOUTH 15	/* You can't shut this one up */
 
+void efi_puts(const char *str);
+
 #endif /* _LINUX_PRINTK_H */

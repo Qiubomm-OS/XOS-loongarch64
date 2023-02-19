@@ -14,10 +14,10 @@ C_FLAGS = -nostdinc -I./arch/loongarch/include -I./include -I./arch/loongarch/in
 	-I./include/uapi -D__KERNEL__ -DVMLINUX_LOAD_ADDRESS=0x9000000000200000 \
 	-fno-PIE -mabi=lp64s -G0 -pipe -msoft-float -mexplicit-relocs \
 	-ffreestanding -mno-check-zero-division -c
-LD_FLAGS = -m elf_i386 -T ./script/kernel.ld -Map ./build/kernel.map -nostdlib
+LD_FLAGS = -m elf64loongarch -z noexecstack --no-warn-rwx-segments -r -T ./arch/loongarch/kernel/vmlinux.lds -Map ./build/kernel.map -nostdlib
 ASM_FLAGS = -f elf -g -F stabs
 
-all: $(S_OBJECTS) $(C_OBJECTS) link update_image
+all: $(S_OBJECTS) $(C_OBJECTS) link
 
 .c.o:
 	@echo 编译代码文件 $< ...
@@ -36,10 +36,6 @@ clean:
 	$(RM) $(S_OBJECTS) $(C_OBJECTS) kernel.bin
 
 .PHONY:update_image
-update_image:
-	sudo cp kernel.bin ./hdisk/boot/
-	sleep 1
-	sync;sync;sync
 
 .PHONY:mount_image
 mount_image:

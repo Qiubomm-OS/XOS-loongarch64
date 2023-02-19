@@ -1,9 +1,9 @@
-__efistub_strcmp = strcmp;
+/* __efistub_strcmp = strcmp; */
 __efistub_kernel_entry = kernel_entry;
-__efistub_kernel_asize = kernel_asize;
+/* __efistub_kernel_asize = kernel_asize; */
 __efistub_kernel_fsize = kernel_fsize;
 __efistub_kernel_offset = kernel_offset;
-__efistub_screen_info = screen_info;
+/* __efistub_screen_info = screen_info; */
 PECOFF_FILE_ALIGN = 0x200;
 PECOFF_SEGMENT_ALIGN = 0x10000;
 OUTPUT_ARCH(loongarch)
@@ -12,7 +12,7 @@ PHDRS {
  text PT_LOAD FLAGS(7);
  note PT_NOTE FLAGS(4);
 }
-jiffies = jiffies_64;
+/* jiffies = jiffies_64; */
 SECTIONS
 {
  . = 0x9000000000200000;

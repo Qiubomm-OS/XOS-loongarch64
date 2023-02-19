@@ -1,6 +1,7 @@
 #include <linux/efi.h>
 #include <linux/types.h>
 #include <linux/compiler.h>
+#include <linux/printk.h>
 
 #include "efistub.h"
 
@@ -29,4 +30,5 @@ efi_status_t efi_pe_entry(efi_handle_t handle, efi_system_table_t *systab)
 	 */
 	status = efi_bs_call(handle_protocol, handle, &loaded_image_proto,
 			     (void *)&image);
+	efi_puts("hello world!\n");
 }

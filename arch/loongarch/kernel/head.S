@@ -22,6 +22,10 @@ SYM_DATA(kernel_asize, .long _end - _text);
 SYM_DATA(kernel_fsize, .long _edata - _text);
 SYM_DATA(kernel_offset, .long kernel_offset - _text);
 
+	__REF
+
+	.align 12
+
 SYM_CODE_START(kernel_entry)			# kernel entry point
 
 SYM_CODE_END(kernel_entry)

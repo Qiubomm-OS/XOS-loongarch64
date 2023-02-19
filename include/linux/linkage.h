@@ -46,6 +46,14 @@
 #define SYM_START(name, linkage, align...)		\
 	SYM_ENTRY(name, linkage, align)
 
+/* SYM_END -- use only if you have to */
+#ifndef SYM_END
+#define SYM_END(name, sym_type)				\
+	.type name sym_type ASM_NL			\
+	.set .L__sym_size_##name, .-name ASM_NL		\
+	.size name, .L__sym_size_##name
+#endif
+
 #define SYM_CODE_START(name)				\
 	SYM_START(name, SYM_L_GLOBAL, SYM_A_ALIGN)
 
@@ -57,6 +65,14 @@
 
 #define SYM_DATA_END(name)				\
 	SYM_END(name, SYM_T_OBJECT)
+
+/* SYM_DATA -- start+end wrapper around simple global data */
+#ifndef SYM_DATA
+#define SYM_DATA(name, data...)				\
+	SYM_DATA_START(name) ASM_NL				\
+	data ASM_NL						\
+	SYM_DATA_END(name)
+#endif
 
 #endif
 

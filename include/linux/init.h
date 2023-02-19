@@ -13,4 +13,7 @@
 #define __INIT		.section	".init.text","ax"
 #define __FINIT		.previous
 
+/* silence warnings when references are OK */
+#define __REF            .section       ".ref.text", "ax"
+
 #endif /* _LINUX_INIT_H */

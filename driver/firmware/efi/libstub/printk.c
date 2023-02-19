@@ -59,3 +59,37 @@ u32 utf8_to_utf32(const u8 **s8)
 	*s8 += clen;
 	return c32;
 }
+
+/**
+ * efi_puts() - Write a UTF-8 encoded string to the console
+ * @str:	UTF-8 encoded string
+ */
+void efi_puts(const char *str)
+{
+	efi_char16_t buf[128];
+	size_t pos = 0, lim = ARRAY_SIZE(buf);
+	const u8 *s8 = (const u8 *)str;
+	u32 c32;
+
+	while (*s8) {
+		if (*s8 == '\n')
+			buf[pos++] = L'\r';
+		c32 = utf8_to_utf32(&s8);
+		if (c32 < 0x10000) {
+			/* Characters in plane 0 use a single word. */
+			buf[pos++] = c32;
+		} else {
+			/*
+			 * Characters in other planes encode into a surrogate
+			 * pair.
+			 */
+			buf[pos++] = (0xd800 - (0x10000 >> 10)) + (c32 >> 10);
+			buf[pos++] = 0xdc00 + (c32 & 0x3ff);
+		}
+		if (*s8 == '\0' || pos >= lim - 2) {
+			buf[pos] = L'\0';
+			efi_char16_puts(buf);
+			pos = 0;
+		}
+	}
+}

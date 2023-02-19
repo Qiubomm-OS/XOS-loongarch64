@@ -2,6 +2,7 @@
 #define _LINUX_COMPILER_H
 
 #include <linux/compiler-intel.h>
+#include <linux/types.h>
 
 #ifndef __always_inline
 # define __always_inline	inline __attribute__((always_inline))
