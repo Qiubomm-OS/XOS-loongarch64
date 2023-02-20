@@ -4,7 +4,7 @@
 #include <linux/types.h>
 
 /* 将src_起始的size个字节复制到dst_ */
-// extern void memcpy(void* dst_,  void* src_, unsigned int size);
+extern void memcpy(void* dst_,  const void* src_, unsigned int size);
 
 char *strcpy(char *dest, const char *src);
 

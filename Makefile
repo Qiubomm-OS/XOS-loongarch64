@@ -13,7 +13,7 @@ ASM = nasm
 
 C_FLAGS = -nostdinc -I./arch/loongarch/include -I./include -I./arch/loongarch/include/uapi \
 	-I./include/uapi -DVMLINUX_LOAD_ADDRESS=0x9000000000200000 \
-	-mabi=lp64s -G0 -pipe -msoft-float -mexplicit-relocs \
+	-mabi=lp64s -G0 -pipe -msoft-float -mexplicit-relocs -fno-builtin\
 	-c -g
 LD_FLAGS = -m elf64loongarch --no-warn-rwx-segments -T ./arch/loongarch/kernel/vmlinux.lds -Map ./build/kernel.map -G0 -static -n -nostdlib
 ASM_FLAGS = -f elf -g -F stabs

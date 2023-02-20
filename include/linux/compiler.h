@@ -3,6 +3,7 @@
 
 #include <linux/compiler-intel.h>
 #include <linux/types.h>
+#include <linux/string.h>
 
 #ifndef __always_inline
 # define __always_inline	inline __attribute__((always_inline))
@@ -22,7 +23,7 @@ static __always_inline void __write_once_size(volatile void *p, void *res, int s
 	case 8: *(__u64_alias_t *) res = *(volatile __u64_alias_t *) p; break;
 	default:
 		barrier();
-		__builtin_memcpy((void *)res, (const void *)p, size);
+		memcpy((void *)res, (const void *)p, size);
 		barrier();
 	}
 }

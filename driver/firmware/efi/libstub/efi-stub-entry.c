@@ -2,7 +2,6 @@
 #include <linux/types.h>
 #include <linux/compiler.h>
 #include <linux/printk.h>
-#include <linux/string.h>
 
 #include "efistub.h"
 
@@ -19,7 +18,7 @@ efi_status_t __efiapi efi_pe_entry(efi_handle_t handle, efi_system_table_t *syst
 	unsigned long reserve_size = 0;
 
 	// WRITE_ONCE(efi_system_table, systab);
-	__builtin_memcpy(&efi_system_table, systab, sizeof(efi_system_table));
+	memcpy(&efi_system_table, systab, sizeof(efi_system_table));
 
 	efi_puts("hello world!!!\n");
 
