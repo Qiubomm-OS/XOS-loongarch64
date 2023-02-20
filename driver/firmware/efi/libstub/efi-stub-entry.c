@@ -20,8 +20,6 @@ efi_status_t __efiapi efi_pe_entry(efi_handle_t handle, efi_system_table_t *syst
 	// WRITE_ONCE(efi_system_table, systab);
 	memcpy(&efi_system_table, systab, sizeof(efi_system_table));
 
-	efi_puts("hello world!!!\n");
-
 	/* Check if we were booted by the EFI firmware */
 	if (efi_system_table->hdr.signature != EFI_SYSTEM_TABLE_SIGNATURE)
 		return EFI_INVALID_PARAMETER;
@@ -33,6 +31,9 @@ efi_status_t __efiapi efi_pe_entry(efi_handle_t handle, efi_system_table_t *syst
 	 */
 	status = efi_bs_call(handle_protocol, handle, &loaded_image_proto,
 			     (void *)&image);
+	if (status != EFI_SUCCESS)
+		return status;
+	
 	efi_puts("hello world!\n");
 	while(1);
 }

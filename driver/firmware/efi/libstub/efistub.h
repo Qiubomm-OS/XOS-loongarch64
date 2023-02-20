@@ -5,7 +5,28 @@
 #include <linux/types.h>
 #include <linux/compiler_attributes.h>
 
+#undef __init
+
+#ifndef EFI_ALLOC_ALIGN
+#define EFI_ALLOC_ALIGN		EFI_PAGE_SIZE
+#endif
+
+#ifndef EFI_ALLOC_LIMIT
+#define EFI_ALLOC_LIMIT		ULONG_MAX
+#endif
+
+extern bool efi_nochunk;
+extern bool efi_nokaslr;
+extern int efi_loglevel;
+extern bool efi_novamap;
+
 extern const efi_system_table_t *efi_system_table;
+
+typedef union efi_dxe_services_table efi_dxe_services_table_t;
+extern const efi_dxe_services_table_t *efi_dxe_table;
+
+efi_status_t __efiapi efi_pe_entry(efi_handle_t handle,
+				   efi_system_table_t *sys_table_arg);
 
 #ifndef ARCH_HAS_EFISTUB_WRAPPERS
 
@@ -26,9 +47,144 @@ extern const efi_system_table_t *efi_system_table;
 #define efi_dxe_call(func, ...) \
 	efi_fn_call(efi_dxe_table, func, ##__VA_ARGS__)
 
+#define efi_info(fmt, ...) \
+	efi_printk(KERN_INFO fmt, ##__VA_ARGS__)
+#define efi_warn(fmt, ...) \
+	efi_printk(KERN_WARNING "WARNING: " fmt, ##__VA_ARGS__)
+#define efi_err(fmt, ...) \
+	efi_printk(KERN_ERR "ERROR: " fmt, ##__VA_ARGS__)
+#define efi_debug(fmt, ...) \
+	efi_printk(KERN_DEBUG "DEBUG: " fmt, ##__VA_ARGS__)
+
+#define efi_printk_once(fmt, ...) 		\
+({						\
+	static bool __print_once;		\
+	bool __ret_print_once = !__print_once;	\
+						\
+	if (!__print_once) {			\
+		__print_once = true;		\
+		efi_printk(fmt, ##__VA_ARGS__);	\
+	}					\
+	__ret_print_once;			\
+})
+
+#define efi_info_once(fmt, ...) \
+	efi_printk_once(KERN_INFO fmt, ##__VA_ARGS__)
+#define efi_warn_once(fmt, ...) \
+	efi_printk_once(KERN_WARNING "WARNING: " fmt, ##__VA_ARGS__)
+#define efi_err_once(fmt, ...) \
+	efi_printk_once(KERN_ERR "ERROR: " fmt, ##__VA_ARGS__)
+#define efi_debug_once(fmt, ...) \
+	efi_printk_once(KERN_DEBUG "DEBUG: " fmt, ##__VA_ARGS__)
+
+/* Helper macros for the usual case of using simple C variables: */
+#ifndef fdt_setprop_inplace_var
+#define fdt_setprop_inplace_var(fdt, node_offset, name, var) \
+	fdt_setprop_inplace((fdt), (node_offset), (name), &(var), sizeof(var))
+#endif
+
+#ifndef fdt_setprop_var
+#define fdt_setprop_var(fdt, node_offset, name, var) \
+	fdt_setprop((fdt), (node_offset), (name), &(var), sizeof(var))
+#endif
+
+#define get_efi_var(name, vendor, ...)				\
+	efi_rt_call(get_variable, (efi_char16_t *)(name),	\
+		    (efi_guid_t *)(vendor), __VA_ARGS__)
+
+#define set_efi_var(name, vendor, ...)				\
+	efi_rt_call(set_variable, (efi_char16_t *)(name),	\
+		    (efi_guid_t *)(vendor), __VA_ARGS__)
+
+#define efi_get_handle_at(array, idx)					\
+	(efi_is_native() ? (array)[idx] 				\
+		: (efi_handle_t)(unsigned long)((u32 *)(array))[idx])
+
+#define efi_get_handle_num(size)					\
+	((size) / (efi_is_native() ? sizeof(efi_handle_t) : sizeof(u32)))
+
+#define for_each_efi_handle(handle, array, size, i)			\
+	for (i = 0;							\
+	     i < efi_get_handle_num(size) &&				\
+		((handle = efi_get_handle_at((array), i)) || true);	\
+	     i++)
+
+// static inline
+// void efi_set_u64_split(u64 data, u32 *lo, u32 *hi)
+// {
+// 	*lo = lower_32_bits(data);
+// 	*hi = upper_32_bits(data);
+// }
+
+/*
+ * Allocation types for calls to boottime->allocate_pages.
+ */
+#define EFI_ALLOCATE_ANY_PAGES		0
+#define EFI_ALLOCATE_MAX_ADDRESS	1
+#define EFI_ALLOCATE_ADDRESS		2
+#define EFI_MAX_ALLOCATE_TYPE		3
+
+/*
+ * The type of search to perform when calling boottime->locate_handle
+ */
+#define EFI_LOCATE_ALL_HANDLES			0
+#define EFI_LOCATE_BY_REGISTER_NOTIFY		1
+#define EFI_LOCATE_BY_PROTOCOL			2
+
+/*
+ * boottime->stall takes the time period in microseconds
+ */
+#define EFI_USEC_PER_SEC		1000000
+
+/*
+ * boottime->set_timer takes the time in 100ns units
+ */
+#define EFI_100NSEC_PER_USEC	((u64)10)
+
+/*
+ * An efi_boot_memmap is used by efi_get_memory_map() to return the
+ * EFI memory map in a dynamically allocated buffer.
+ *
+ * The buffer allocated for the EFI memory map includes extra room for
+ * a minimum of EFI_MMAP_NR_SLACK_SLOTS additional EFI memory descriptors.
+ * This facilitates the reuse of the EFI memory map buffer when a second
+ * call to ExitBootServices() is needed because of intervening changes to
+ * the EFI memory map. Other related structures, e.g. x86 e820ext, need
+ * to factor in this headroom requirement as well.
+ */
+#define EFI_MMAP_NR_SLACK_SLOTS	8
+
 typedef struct efi_generic_dev_path efi_device_path_protocol_t;
 
+union efi_device_path_to_text_protocol {
+	struct {
+		efi_char16_t *(__efiapi *convert_device_node_to_text)(
+					const efi_device_path_protocol_t *,
+					bool, bool);
+		efi_char16_t *(__efiapi *convert_device_path_to_text)(
+					const efi_device_path_protocol_t *,
+					bool, bool);
+	};
+	struct {
+		u32 convert_device_node_to_text;
+		u32 convert_device_path_to_text;
+	} mixed_mode;
+};
+
 typedef union efi_device_path_from_text_protocol efi_device_path_from_text_protocol_t;
+
+union efi_device_path_from_text_protocol {
+	struct {
+		efi_device_path_protocol_t *
+			(__efiapi *convert_text_to_device_node)(const efi_char16_t *);
+		efi_device_path_protocol_t *
+			(__efiapi *convert_text_to_device_path)(const efi_char16_t *);
+	};
+	struct {
+		u32 convert_text_to_device_node;
+		u32 convert_text_to_device_path;
+	} mixed_mode;
+};
 
 typedef void *efi_event_t;
 /* Note that notifications won't work in mixed mode */
@@ -734,5 +890,168 @@ typedef struct {
 	u32 optional_data_size;
 	const void *optional_data;
 } efi_load_option_unpacked_t;
+
+typedef efi_status_t (*efi_exit_boot_map_processing)(
+	struct efi_boot_memmap *map,
+	void *priv);
+
+efi_status_t efi_exit_boot_services(void *handle, void *priv,
+				    efi_exit_boot_map_processing priv_func);
+
+efi_status_t efi_boot_kernel(void *handle, efi_loaded_image_t *image,
+			     unsigned long kernel_addr, char *cmdline_ptr);
+
+void *get_fdt(unsigned long *fdt_size);
+
+efi_status_t efi_alloc_virtmap(efi_memory_desc_t **virtmap,
+			       unsigned long *desc_size, u32 *desc_ver);
+void efi_get_virtmap(efi_memory_desc_t *memory_map, unsigned long map_size,
+		     unsigned long desc_size, efi_memory_desc_t *runtime_map,
+		     int *count);
+
+efi_status_t efi_get_random_bytes(unsigned long size, u8 *out);
+
+efi_status_t efi_random_alloc(unsigned long size, unsigned long align,
+			      unsigned long *addr, unsigned long random_seed,
+			      int memory_type);
+
+efi_status_t efi_random_get_seed(void);
+
+efi_status_t check_platform_features(void);
+
+void *get_efi_config_table(efi_guid_t guid);
+
+/* NOTE: These functions do not print a trailing newline after the string */
+void efi_char16_puts(efi_char16_t *);
+void efi_puts(const char *str);
+
+// __printf(1, 2) int efi_printk(char const *fmt, ...);
+
+void efi_free(unsigned long size, unsigned long addr);
+
+void efi_apply_loadoptions_quirk(const void **load_options, u32 *load_options_size);
+
+char *efi_convert_cmdline(efi_loaded_image_t *image, int *cmd_line_len);
+
+efi_status_t efi_get_memory_map(struct efi_boot_memmap **map,
+				bool install_cfg_tbl);
+
+efi_status_t efi_allocate_pages(unsigned long size, unsigned long *addr,
+				unsigned long max);
+
+efi_status_t efi_allocate_pages_aligned(unsigned long size, unsigned long *addr,
+					unsigned long max, unsigned long align,
+					int memory_type);
+
+efi_status_t efi_low_alloc_above(unsigned long size, unsigned long align,
+				 unsigned long *addr, unsigned long min);
+
+efi_status_t efi_relocate_kernel(unsigned long *image_addr,
+				 unsigned long image_size,
+				 unsigned long alloc_size,
+				 unsigned long preferred_addr,
+				 unsigned long alignment,
+				 unsigned long min_addr);
+
+efi_status_t efi_parse_options(char const *cmdline);
+
+void efi_parse_option_graphics(char *option);
+
+// efi_status_t efi_setup_gop(struct screen_info *si, efi_guid_t *proto,
+			//    unsigned long size);
+
+efi_status_t handle_cmdline_files(efi_loaded_image_t *image,
+				  const efi_char16_t *optstr,
+				  int optstr_size,
+				  unsigned long soft_limit,
+				  unsigned long hard_limit,
+				  unsigned long *load_addr,
+				  unsigned long *load_size);
+
+
+// static inline efi_status_t efi_load_dtb(efi_loaded_image_t *image,
+// 					unsigned long *load_addr,
+// 					unsigned long *load_size)
+// {
+// 	return handle_cmdline_files(image, L"dtb=", sizeof(L"dtb=") - 2,
+// 				    ULONG_MAX, ULONG_MAX, load_addr, load_size);
+// }
+
+// efi_status_t efi_load_initrd(efi_loaded_image_t *image,
+// 			     unsigned long soft_limit,
+// 			     unsigned long hard_limit,
+// 			     const struct linux_efi_initrd **out);
+/*
+ * This function handles the architcture specific differences between arm and
+ * arm64 regarding where the kernel image must be loaded and any memory that
+ * must be reserved. On failure it is required to free all
+ * all allocations it has made.
+ */
+efi_status_t handle_kernel_image(unsigned long *image_addr,
+				 unsigned long *image_size,
+				 unsigned long *reserve_addr,
+				 unsigned long *reserve_size,
+				 efi_loaded_image_t *image,
+				 efi_handle_t image_handle);
+
+/* shared entrypoint between the normal stub and the zboot stub */
+efi_status_t efi_stub_common(efi_handle_t handle,
+			     efi_loaded_image_t *image,
+			     unsigned long image_addr,
+			     char *cmdline_ptr);
+
+efi_status_t efi_handle_cmdline(efi_loaded_image_t *image, char **cmdline_ptr);
+
+// asmlinkage void __noreturn efi_enter_kernel(unsigned long entrypoint,
+// 					    unsigned long fdt_addr,
+// 					    unsigned long fdt_size);
+
+void efi_handle_post_ebs_state(void);
+
+enum efi_secureboot_mode efi_get_secureboot(void);
+
+#ifdef CONFIG_RESET_ATTACK_MITIGATION
+void efi_enable_reset_attack_mitigation(void);
+#else
+static inline void
+efi_enable_reset_attack_mitigation(void) { }
+#endif
+
+void efi_retrieve_tpm2_eventlog(void);
+
+struct screen_info *alloc_screen_info(void);
+void free_screen_info(struct screen_info *si);
+
+void efi_cache_sync_image(unsigned long image_base,
+			  unsigned long alloc_size,
+			  unsigned long code_size);
+
+struct efi_smbios_record {
+	u8	type;
+	u8	length;
+	u16	handle;
+};
+
+struct efi_smbios_type1_record {
+	struct efi_smbios_record	header;
+
+	u8				manufacturer;
+	u8				product_name;
+	u8				version;
+	u8				serial_number;
+	efi_guid_t			uuid;
+	u8				wakeup_type;
+	u8				sku_number;
+	u8				family;
+};
+
+#define efi_get_smbios_string(__type, __name) ({			\
+	int size = sizeof(struct efi_smbios_type ## __type ## _record);	\
+	int off = offsetof(struct efi_smbios_type ## __type ## _record,	\
+			   __name);					\
+	__efi_get_smbios_string(__type, off, size);			\
+})
+
+const u8 *__efi_get_smbios_string(u8 type, int offset, int recsize);
 
 #endif /* _DRIVER_FIRMWARE_EFI_EFISTUB_H */

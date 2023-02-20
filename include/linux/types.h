@@ -1,6 +1,8 @@
 #ifndef _LINUX_TYPES_H
 #define _LINUX_TYPES_H
 
+#define asmlinkage __attribute__((regparm(0)))
+
 #define ARRAY_SIZE(x) (sizeof(x) / sizeof((x)[0]))
 
 #define NULL ((void*)0)
@@ -31,7 +33,7 @@ typedef u32                 uint32_t;
 typedef u64                 uint64_t;
 
 typedef unsigned long		size_t;
-typedef u64			phys_addr_t;
+typedef u64			        phys_addr_t;
 
 #define __aligned_u64 __u64 __attribute__((aligned(8)))
 
