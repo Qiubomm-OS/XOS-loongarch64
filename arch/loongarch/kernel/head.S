@@ -4,19 +4,7 @@
 
 #include <asm/loongarch.h>
 
-	__HEAD
-	
-_head:
-	.word MZ_MAGIC
-	.org	0x8
-	.dword kernel_entry
-	.dword	_end - _text		/* Kernel image effective size */
-	.quad	0			/* Kernel image load offset from start of RAM */
-	.org	0x38			/* 0x20 ~ 0x37 reserved */
-	.long	LINUX_PE_MAGIC
-	.long	pe_header - _head	/* Offset to the PE header */
-
-pe_header:
+	.macro	__EFI_PE_HEADER
 	.long	PE_MAGIC
 .Lcoff_header:
 	.short	IMAGE_FILE_MACHINE_LOONGARCH64		/* Machine */
@@ -106,6 +94,22 @@ pe_header:
 
 	.balign	0x10000					/* PECOFF_SEGMENT_ALIGN */
 .Lefi_header_end:
+	.endm
+
+	__HEAD
+	
+_head:
+	.word MZ_MAGIC
+	.org	0x8
+	.dword kernel_entry
+	.dword	_end - _text		/* Kernel image effective size */
+	.quad	0			/* Kernel image load offset from start of RAM */
+	.org	0x38			/* 0x20 ~ 0x37 reserved */
+	.long	LINUX_PE_MAGIC
+	.long	pe_header - _head	/* Offset to the PE header */
+
+pe_header:
+	__EFI_PE_HEADER
 
 SYM_DATA(kernel_asize, .long _end - _text);
 SYM_DATA(kernel_fsize, .long _edata - _text);
