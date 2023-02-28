@@ -114,6 +114,6 @@ git clone https://github.com/yangxiaojuan-loongson/qemu-binary
 	-initrd ../qemu-binary/ramdisk \
 	-serial stdio -monitor telnet:localhost:4495,server,nowait \
 	-append "root=/dev/ram rdinit=/sbin/init console=ttyS0,115200" \
-	--nographic
+	-nographic
 ```
 

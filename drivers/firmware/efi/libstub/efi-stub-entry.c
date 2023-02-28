@@ -62,6 +62,6 @@ efi_status_t __efiapi efi_pe_entry(efi_handle_t handle, efi_system_table_t *syst
 	if (status != EFI_SUCCESS)
 		return status;
 	
-	efi_puts("hello world!\n");
+	efi_info("Booting XOS kernel... \n");
 	while(1);
 }

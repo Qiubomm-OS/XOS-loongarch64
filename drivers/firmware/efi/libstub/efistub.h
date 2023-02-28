@@ -925,7 +925,7 @@ void *get_efi_config_table(efi_guid_t guid);
 void efi_char16_puts(efi_char16_t *);
 void efi_puts(const char *str);
 
-// __printf(1, 2) int efi_printk(char const *fmt, ...);
+int efi_printk(char const *fmt, ...);
 
 void efi_free(unsigned long size, unsigned long addr);
 

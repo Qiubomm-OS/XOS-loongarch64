@@ -30,3 +30,24 @@ char *strcpy(char *dest, const char *src)
 		/* nothing */;
 	return tmp;
 }
+
+uint32_t strlen(const char* str)
+{
+   if(str == NULL) {
+       efi_puts("BUG!!!");
+       while(1);
+   }
+   const char* p = str;
+   while(*p++);
+   return (p - str - 1);
+}
+
+uint32_t strnlen(const char* str, uint32_t max)
+{
+    if(str == NULL) {
+        efi_puts("BUG!!!");
+        while(1);
+    }
+    uint32_t len = strlen(str);
+    return len >= max ? max : len;
+}

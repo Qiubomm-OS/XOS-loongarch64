@@ -9,5 +9,7 @@ extern void memset(void* dst_, uint8_t value, uint32_t size);
 extern void memcpy(void* dst_,  const void* src_, unsigned int size);
 
 char *strcpy(char *dest, const char *src);
+uint32_t strlen(const char *str);
+uint32_t strnlen(const char* str, uint32_t max);
 
 #endif /* _LINUX_STRING_H */
