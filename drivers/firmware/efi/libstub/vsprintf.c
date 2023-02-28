@@ -381,15 +381,17 @@ int vsnprintf(char *buf, size_t size, const char *fmt, va_list ap)
 		case 'p':
 			if (precision < 0)
 				precision = 2 * sizeof(void *);
+			fallthrough;
 		case 'x':
 			flags |= SMALL;
+			fallthrough;
 		case 'X':
 			base = 16;
 			break;
-
 		case 'd':
 		case 'i':
 			flags |= SIGN;
+			fallthrough;
 		case 'u':
 			flags &= ~SPECIAL;
 			base = 10;
