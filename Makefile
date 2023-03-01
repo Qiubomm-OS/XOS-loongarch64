@@ -21,7 +21,7 @@ ASM_FLAGS = -f elf -g -F stabs
 all: $(S_OBJECTS) $(C_OBJECTS) link
 
 arch/loongarch/kernel/head.o: arch/loongarch/kernel/head.S
-	loongarch64-unknown-linux-gnu-gcc \
+	$(CC) \
 	-nostdinc -I./arch/loongarch/include \
 	-I./include -I./arch/loongarch/include/uapi \
 	-I./include/uapi \
@@ -30,7 +30,7 @@ arch/loongarch/kernel/head.o: arch/loongarch/kernel/head.S
 	-c -o arch/loongarch/kernel/head.o arch/loongarch/kernel/head.S
 
 drivers/firmware/efi/libstub/efi-stub-entry.o: drivers/firmware/efi/libstub/efi-stub-entry.c
-	loongarch64-unknown-linux-gnu-gcc -nostdinc -I./arch/loongarch/include -I./include -I./arch/loongarch/include/uapi \
+	$(CC) -I./arch/loongarch/include -I./include -I./arch/loongarch/include/uapi \
 	-I./include/uapi -Wall -Wundef -Werror=strict-prototypes -Wno-trigraphs -fno-strict-aliasing -fno-common \
 	-fshort-wchar -fno-PIE -Werror=implicit-function-declaration -Werror=implicit-int \
 	-Werror=return-type -Wno-format-security -funsigned-char -std=gnu11 \
@@ -47,7 +47,7 @@ drivers/firmware/efi/libstub/efi-stub-entry.o: drivers/firmware/efi/libstub/efi-
 	-mdirect-extern-access -c -o drivers/firmware/efi/libstub/efi-stub-entry.o drivers/firmware/efi/libstub/efi-stub-entry.c
 
 drivers/firmware/efi/libstub/printk.o: drivers/firmware/efi/libstub/printk.c
-	loongarch64-unknown-linux-gnu-gcc -nostdinc -I./arch/loongarch/include -I./include -I./arch/loongarch/include/uapi \
+	$(CC) -nostdinc -I./arch/loongarch/include -I./include -I./arch/loongarch/include/uapi \
 	-I./include/uapi -Wall -Wundef -Werror=strict-prototypes -Wno-trigraphs -fno-strict-aliasing -fno-common -fshort-wchar \
 	-fno-PIE -Werror=implicit-function-declaration -Werror=implicit-int -Werror=return-type -Wno-format-security -funsigned-char -std=gnu11 \
 	-mabi=lp64s -G0 -pipe -msoft-float -mexplicit-relocs -ffreestanding -mno-check-zero-division -fno-asynchronous-unwind-tables \
@@ -62,7 +62,7 @@ drivers/firmware/efi/libstub/printk.o: drivers/firmware/efi/libstub/printk.c
 	-c -o drivers/firmware/efi/libstub/printk.o drivers/firmware/efi/libstub/printk.c
 
 drivers/firmware/efi/libstub/systable.o: drivers/firmware/efi/libstub/systable.c
-	loongarch64-unknown-linux-gnu-gcc -nostdinc -I./arch/loongarch/include -I./include -I./arch/loongarch/include/uapi \
+	$(CC) -nostdinc -I./arch/loongarch/include -I./include -I./arch/loongarch/include/uapi \
 	-I./include/uapi -Wall -Wundef -Werror=strict-prototypes -Wno-trigraphs -fno-strict-aliasing -fno-common -fshort-wchar -fno-PIE \
 	-Werror=implicit-function-declaration -Werror=implicit-int -Werror=return-type -Wno-format-security -funsigned-char -std=gnu11 \
 	-mabi=lp64s -G0 -pipe -msoft-float -mexplicit-relocs -ffreestanding -mno-check-zero-division -fno-asynchronous-unwind-tables \
@@ -77,7 +77,7 @@ drivers/firmware/efi/libstub/systable.o: drivers/firmware/efi/libstub/systable.c
 	-c -o drivers/firmware/efi/libstub/systable.o drivers/firmware/efi/libstub/systable.c
 
 lib/string.o: lib/string.c
-	loongarch64-unknown-linux-gnu-gcc -nostdinc -I./arch/loongarch/include -I./include -I./arch/loongarch/include/uapi \
+	$(CC) -nostdinc -I./arch/loongarch/include -I./include -I./arch/loongarch/include/uapi \
 	-I./include/uapi -Wall -Wundef -Werror=strict-prototypes -Wno-trigraphs -fno-strict-aliasing -fno-common -fshort-wchar -fno-PIE \
 	-Werror=implicit-function-declaration -Werror=implicit-int -Werror=return-type -Wno-format-security -funsigned-char -std=gnu11 -mabi=lp64s \
 	-G0 -pipe -msoft-float -mexplicit-relocs -ffreestanding -mno-check-zero-division -fno-asynchronous-unwind-tables \
@@ -91,7 +91,7 @@ lib/string.o: lib/string.c
 	-c -o lib/string.o lib/string.c
 
 drivers/firmware/efi/libstub/vsprintf.o: drivers/firmware/efi/libstub/vsprintf.c
-	loongarch64-unknown-linux-gnu-gcc -nostdinc -I./arch/loongarch/include -I./include -I./arch/loongarch/include/uapi \
+	$(CC) -nostdinc -I./arch/loongarch/include -I./include -I./arch/loongarch/include/uapi \
 	-I./include/uapi -Wall -Wundef -Werror=strict-prototypes -Wno-trigraphs -fno-strict-aliasing -fno-common -fshort-wchar \
 	-fno-PIE -Werror=implicit-function-declaration -Werror=implicit-int -Werror=return-type -Wno-format-security \
 	-funsigned-char -std=gnu11 -mabi=lp64s -G0 -pipe -msoft-float -mexplicit-relocs -ffreestanding -mno-check-zero-division \
@@ -104,6 +104,21 @@ drivers/firmware/efi/libstub/vsprintf.o: drivers/firmware/efi/libstub/vsprintf.c
 	-Werror=date-time -Werror=incompatible-pointer-types -Werror=designated-init -Wno-packed-not-aligned -fpie -Os -DDISABLE_BRANCH_PROFILING \
 	-D__NO_FORTIFY -ffreestanding -fno-stack-protector -D__DISABLE_EXPORTS   -mdirect-extern-access \
 	-c -o drivers/firmware/efi/libstub/vsprintf.o drivers/firmware/efi/libstub/vsprintf.c
+
+drivers/firmware/efi/libstub/loongarch-stub.o: drivers/firmware/efi/libstub/loongarch-stub.c
+	$(CC) -nostdinc -I./arch/loongarch/include -I./include -I./arch/loongarch/include/uapi \
+	-I./arch/loongarch/include/generated/uapi -Wall -Wundef -Werror=strict-prototypes -Wno-trigraphs -fno-strict-aliasing \
+	-fno-common -fshort-wchar -fno-PIE -Werror=implicit-function-declaration -Werror=implicit-int -Werror=return-type \
+	-Wno-format-security -funsigned-char -std=gnu11 -mabi=lp64s -G0 -pipe -msoft-float -mexplicit-relocs -ffreestanding \
+	-mno-check-zero-division -fno-asynchronous-unwind-tables -isystem /opt/cross-tools/lib/gcc/loongarch64-unknown-linux-gnu/13.0.0/include \
+	-fno-delete-null-pointer-checks -Wno-frame-address -Wno-format-truncation -Wno-format-overflow -Wno-address-of-packed-member \
+	-O2 -fno-allow-store-data-races -Wframe-larger-than=2048 -fstack-protector-strong -Wno-main -Wno-unused-but-set-variable \
+	-Wno-unused-const-variable -Wno-dangling-pointer -fomit-frame-pointer -ftrivial-auto-var-init=zero -fno-stack-clash-protection \
+	-Wdeclaration-after-statement -Wvla -Wno-pointer-sign -Wcast-function-type -Wno-stringop-truncation -Wno-stringop-overflow -Wno-restrict \
+	-Wno-maybe-uninitialized -Wno-alloc-size-larger-than -Wimplicit-fallthrough=5 -fno-strict-overflow -fno-stack-check -fconserve-stack \
+	-Werror=date-time -Werror=incompatible-pointer-types -Werror=designated-init -Wno-packed-not-aligned -fpie -Os -DDISABLE_BRANCH_PROFILING \
+	-ffreestanding -fno-stack-protector -mdirect-extern-access \
+	-c -o drivers/firmware/efi/libstub/loongarch-stub.o drivers/firmware/efi/libstub/loongarch-stub.c
 
 link:
 	@echo 链接内核文件...
