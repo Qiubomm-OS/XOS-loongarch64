@@ -37,13 +37,13 @@ efi_status_t __efiapi efi_pe_entry(efi_handle_t handle, efi_system_table_t *syst
 {	
 	efi_loaded_image_t *image;
 	efi_status_t status;
-	// unsigned long image_addr;
-	// unsigned long image_size = 0;
+	unsigned long image_addr;
+	unsigned long image_size = 0;
 	/* addr/point and size pairs for memory management*/
 	// char *cmdline_ptr = NULL;
 	efi_guid_t loaded_image_proto = LOADED_IMAGE_PROTOCOL_GUID;
-	// unsigned long reserve_addr = 0;
-	// unsigned long reserve_size = 0;
+	unsigned long reserve_addr = 0;
+	unsigned long reserve_size = 0;
 
 	// efi_system_table = systab;
 	__WRITE_ONCE(efi_system_table, systab);
@@ -61,6 +61,15 @@ efi_status_t __efiapi efi_pe_entry(efi_handle_t handle, efi_system_table_t *syst
 			     (void *)&image);
 	if (status != EFI_SUCCESS)
 		return status;
+
+	status = handle_kernel_image(&image_addr, &image_size,
+				     &reserve_addr,
+				     &reserve_size,
+				     image, handle);
+	if (status != EFI_SUCCESS) {
+		efi_err("Failed to relocate kernel\n");
+		return status;
+	}
 	
 	efi_info("Booting XOS kernel... \n");
 	while(1);

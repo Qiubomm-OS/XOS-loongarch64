@@ -1,4 +1,4 @@
-## qemu-system-loongarch64 运行 linux
+## qemu-system-loongarch64 运行 linux-loongarch64
 
 > 假设当前工作目录位 loongson
 
@@ -116,4 +116,3 @@ git clone https://github.com/yangxiaojuan-loongson/qemu-binary
 	-append "root=/dev/ram rdinit=/sbin/init console=ttyS0,115200" \
 	-nographic
 ```
-
