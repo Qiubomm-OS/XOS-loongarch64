@@ -122,6 +122,7 @@ drivers/firmware/efi/libstub/loongarch-stub.o: drivers/firmware/efi/libstub/loon
 
 link:
 	@echo 链接内核文件...
+	mkdir -p build/
 	$(LD) $(LD_FLAGS) $(S_OBJECTS) $(C_OBJECTS) -o kernel
 	$(OBJCOPY) -O binary --remove-section=.comment --remove-section=.note \
 		--remove-section=.options --remove-section=.note.gnu.build-id \
