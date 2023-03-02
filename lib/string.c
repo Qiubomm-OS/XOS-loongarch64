@@ -23,6 +23,24 @@ void memcpy(void* dst_, const void* src_, uint32_t size)
 	*dst++ = *src++;
 }
 
+int memcmp(const void* a_, const void* b_, uint32_t size)
+{
+	const char* a = a_;
+	const char* b = b_;
+	if(a == NULL || b == NULL) {
+		efi_puts("BUG!!!");
+		while(1);
+	}
+	while (size-- > 0) {
+		if(*a != *b) {
+			return *a > *b ? 1 : -1; 
+		}
+		a++;
+		b++;
+	}
+	return 0;
+}
+
 char *strcpy(char *dest, const char *src)
 {
 	char *tmp = dest;

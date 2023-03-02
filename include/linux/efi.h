@@ -5,6 +5,7 @@
 #include <linux/compiler_attributes.h>
 #include <linux/range.h>
 #include <linux/screen_info.h>
+#include <linux/string.h>
 
 #define __efiapi
 
@@ -634,5 +635,11 @@ extern struct efi {
 #define EFI_RT_SUPPORTED_VARIABLE_SERVICES			0x0070
 
 // extern struct mm_struct efi_mm;
+
+static inline int
+efi_guidcmp (efi_guid_t left, efi_guid_t right)
+{
+	return memcmp(&left, &right, sizeof (efi_guid_t));
+}
 
 #endif /* _LINUX_EFI_H */

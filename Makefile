@@ -30,7 +30,8 @@ ASM_FLAGS = -f elf -g -F stabs
 all: $(S_OBJECTS) $(C_OBJECTS) link
 
 arch/loongarch/kernel/head.o: arch/loongarch/kernel/head.S
-	$(CC) \
+	@echo 编译代码文件 $< ...
+	@$(CC) \
 	-nostdinc -I./arch/loongarch/include \
 	-I./include -I./arch/loongarch/include/uapi \
 	-I./include/uapi \
@@ -39,33 +40,49 @@ arch/loongarch/kernel/head.o: arch/loongarch/kernel/head.S
 	-c -o arch/loongarch/kernel/head.o arch/loongarch/kernel/head.S
 
 drivers/firmware/efi/libstub/efi-stub-entry.o: drivers/firmware/efi/libstub/efi-stub-entry.c
-	$(CC) $(C_FLAGS) -o $@ $<
+	@echo 编译代码文件 $< ...
+	@$(CC) $(C_FLAGS) -o $@ $<
 
 drivers/firmware/efi/libstub/printk.o: drivers/firmware/efi/libstub/printk.c
-	$(CC) $(C_FLAGS) -o $@ $<
+	@echo 编译代码文件 $< ...
+	@$(CC) $(C_FLAGS) -o $@ $<
 
 drivers/firmware/efi/libstub/systable.o: drivers/firmware/efi/libstub/systable.c
-	$(CC) $(C_FLAGS) -o $@ $<
+	@echo 编译代码文件 $< ...
+	@$(CC) $(C_FLAGS) -o $@ $<
 
 lib/string.o: lib/string.c
-	$(CC) $(C_FLAGS) -o $@ $<
+	@echo 编译代码文件 $< ...
+	@$(CC) $(C_FLAGS) -o $@ $<
 
 drivers/firmware/efi/libstub/vsprintf.o: drivers/firmware/efi/libstub/vsprintf.c
-	$(CC) $(C_FLAGS) -o $@ $<
+	@echo 编译代码文件 $< ...
+	@$(CC) $(C_FLAGS) -o $@ $<
 
 drivers/firmware/efi/libstub/loongarch-stub.o: drivers/firmware/efi/libstub/loongarch-stub.c
-	$(CC) $(C_FLAGS) -o $@ $<
+	@echo 编译代码文件 $< ...
+	@$(CC) $(C_FLAGS) -o $@ $<
 
 drivers/firmware/efi/libstub/screen_info.o: drivers/firmware/efi/libstub/screen_info.c
-	$(CC) $(C_FLAGS) -o $@ $<
+	@echo 编译代码文件 $< ...
+	@$(CC) $(C_FLAGS) -o $@ $<
 
 drivers/firmware/efi/libstub/efi-stub.o: drivers/firmware/efi/libstub/efi-stub.c
-	$(CC) $(C_FLAGS) -o $@ $<
+	@echo 编译代码文件 $< ...
+	@$(CC) $(C_FLAGS) -o $@ $<
+
+drivers/firmware/efi/libstub/loongarch.o: drivers/firmware/efi/libstub/loongarch.c
+	@echo 编译代码文件 $< ...
+	@$(CC) $(C_FLAGS) -o $@ $<	
+
+drivers/firmware/efi/libstub/efi-stub-helper.o: drivers/firmware/efi/libstub/efi-stub-helper.c
+	@echo 编译代码文件 $< ...
+	@$(CC) $(C_FLAGS) -o $@ $<
 
 link:
 	@echo 链接内核文件...
 	mkdir -p build/
-	$(LD) $(LD_FLAGS) $(S_OBJECTS) $(C_OBJECTS) -o kernel
+	@$(LD) $(LD_FLAGS) $(S_OBJECTS) $(C_OBJECTS) -o kernel
 	$(OBJCOPY) -O binary --remove-section=.comment --remove-section=.note \
 		--remove-section=.options --remove-section=.note.gnu.build-id \
 		-S kernel kernel.efi

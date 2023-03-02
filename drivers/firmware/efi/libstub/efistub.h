@@ -4,6 +4,7 @@
 #include <linux/efi.h>
 #include <linux/types.h>
 #include <linux/compiler_attributes.h>
+#include <linux/kern_level.h>
 
 #undef __init
 
