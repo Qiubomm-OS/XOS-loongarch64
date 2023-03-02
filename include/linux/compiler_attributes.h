@@ -12,4 +12,6 @@
 # define fallthrough                    do {} while (0)  /* fallthrough */
 #endif
 
+#define __weak                          __attribute__((__weak__))
+
 #endif /* _LINUX_COMPILER_ATTRIBUTTES_H */

@@ -4,6 +4,7 @@
 #include <linux/types.h>
 #include <linux/compiler_attributes.h>
 #include <linux/range.h>
+#include <linux/screen_info.h>
 
 #define __efiapi
 

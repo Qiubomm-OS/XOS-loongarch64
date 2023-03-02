@@ -56,6 +56,12 @@ drivers/firmware/efi/libstub/vsprintf.o: drivers/firmware/efi/libstub/vsprintf.c
 drivers/firmware/efi/libstub/loongarch-stub.o: drivers/firmware/efi/libstub/loongarch-stub.c
 	$(CC) $(C_FLAGS) -o $@ $<
 
+drivers/firmware/efi/libstub/screen_info.o: drivers/firmware/efi/libstub/screen_info.c
+	$(CC) $(C_FLAGS) -o $@ $<
+
+drivers/firmware/efi/libstub/efi-stub.o: drivers/firmware/efi/libstub/efi-stub.c
+	$(CC) $(C_FLAGS) -o $@ $<
+
 link:
 	@echo 链接内核文件...
 	mkdir -p build/

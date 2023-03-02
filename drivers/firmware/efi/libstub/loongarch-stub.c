@@ -1,8 +1,14 @@
 #include <asm/efi.h>
+#include <linux/efi.h>
 #include <linux/math.h>
 #include <linux/string.h>
 
 #include "efistub.h"
+
+efi_status_t check_platform_features(void)
+{
+	return EFI_SUCCESS;
+}
 
 extern int kernel_asize;
 extern int kernel_fsize;
