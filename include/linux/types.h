@@ -46,4 +46,8 @@ typedef struct {
 #define UINT32_MAX		((u32)~0U)
 #define INT32_MAX		((s32)(UINT32_MAX >> 1))
 
+typedef struct {
+	int counter;
+} atomic_t;
+
 #endif /* _LINUX_TYPES_ */
