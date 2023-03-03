@@ -9,10 +9,10 @@ S_OBJECTS = $(patsubst %.S, %.o, $(S_SOURCES))
 CC = /opt/cross-tools/bin/loongarch64-unknown-linux-gnu-gcc
 LD = /opt/cross-tools/bin/loongarch64-unknown-linux-gnu-ld
 OBJCOPY = /opt/cross-tools/bin/loongarch64-unknown-linux-gnu-objcopy
-ASM = nasm
+ASM = /opt/cross-tools/bin/loongarch64-unknown-linux-gnu-gcc
 QEMU = ../qemu-7.2.0/build/qemu-system-loongarch64
 
-C_FLAGS = -nostdinc -I./arch/loongarch/include -I./include -I./arch/loongarch/include/uapi \
+C_FLAGS = -nostdinc -I./arch/loongarch/include -I./include -I./arch/loongarch/include/uapi -I./include/uapi\
 	-Wall -Wundef -Werror=strict-prototypes -Wno-trigraphs -fno-strict-aliasing \
 	-fno-common -fshort-wchar -fno-PIE -Werror=implicit-function-declaration -Werror=implicit-int -Werror=return-type \
 	-Wno-format-security -funsigned-char -std=gnu11 -mabi=lp64s -G0 -pipe -msoft-float -mexplicit-relocs -ffreestanding \
@@ -32,11 +32,9 @@ all: $(S_OBJECTS) $(C_OBJECTS) link
 
 arch/loongarch/kernel/head.o: arch/loongarch/kernel/head.S
 	@echo 编译代码文件 $< ...
-	@$(CC) \
-	-nostdinc -I./arch/loongarch/include \
-	-I./include -I./arch/loongarch/include/uapi \
-	-I./include/uapi \
-	-fno-PIE -mabi=lp64s -G0 -pipe -msoft-float -mexplicit-relocs \
+	/opt/cross-tools/bin/loongarch64-unknown-linux-gnu-gcc -nostdinc -I./arch/loongarch/include \
+	-I./include -I./arch/loongarch/include/uapi -I./include/uapi \
+	-D__ASSEMBLY__ -fno-PIE -mabi=lp64s -G0 -pipe -msoft-float -mexplicit-relocs \
 	-ffreestanding -mno-check-zero-division \
 	-c -o arch/loongarch/kernel/head.o arch/loongarch/kernel/head.S
 
@@ -77,6 +75,10 @@ drivers/firmware/efi/libstub/loongarch.o: drivers/firmware/efi/libstub/loongarch
 	@$(CC) $(C_FLAGS) -o $@ $<	
 
 drivers/firmware/efi/libstub/efi-stub-helper.o: drivers/firmware/efi/libstub/efi-stub-helper.c
+	@echo 编译代码文件 $< ...
+	@$(CC) $(C_FLAGS) -o $@ $<
+
+drivers/firmware/efi/libstub/mem.o: drivers/firmware/efi/libstub/mem.c
 	@echo 编译代码文件 $< ...
 	@$(CC) $(C_FLAGS) -o $@ $<
 

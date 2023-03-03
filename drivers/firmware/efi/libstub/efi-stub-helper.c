@@ -28,3 +28,45 @@ void *get_efi_config_table(efi_guid_t guid)
 	}
 	return NULL;
 }
+
+efi_status_t efi_exit_boot_services(void *handle, void *priv,
+				    efi_exit_boot_map_processing priv_func)
+{
+	struct efi_boot_memmap *map;
+	efi_status_t status;
+
+	status = efi_get_memory_map(&map, true);
+	if (status != EFI_SUCCESS)
+		return status;
+
+	status = priv_func(map, priv);
+	if (status != EFI_SUCCESS) {
+		efi_bs_call(free_pool, map);
+		return status;
+	}
+
+	status = efi_bs_call(exit_boot_services, handle, map->map_key);
+
+	if (status == EFI_INVALID_PARAMETER) {
+		map->map_size = map->buff_size;
+		status = efi_bs_call(get_memory_map,
+				     &map->map_size,
+				     &map->map,
+				     &map->map_key,
+				     &map->desc_size,
+				     &map->desc_ver);
+
+		/* exit_boot_services() was called, thus cannot free */
+		if (status != EFI_SUCCESS)
+			return status;
+
+		status = priv_func(map, priv);
+		/* exit_boot_services() was called, thus cannot free */
+		if (status != EFI_SUCCESS)
+			return status;
+
+		status = efi_bs_call(exit_boot_services, handle, map->map_key);
+	}
+
+	return status;
+}

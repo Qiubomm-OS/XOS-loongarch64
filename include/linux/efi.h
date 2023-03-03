@@ -6,6 +6,11 @@
 #include <linux/range.h>
 #include <linux/screen_info.h>
 #include <linux/string.h>
+#include <linux/atomic-instrumented.h>
+#include <asm/loongarch.h>
+#include <linux/size.h>
+#include <linux/math.h>
+#include <linux/align.h>
 
 #define __efiapi
 
@@ -641,5 +646,15 @@ efi_guidcmp (efi_guid_t left, efi_guid_t right)
 {
 	return memcmp(&left, &right, sizeof (efi_guid_t));
 }
+
+struct linux_efi_memreserve {
+	int		size;			// allocated size of the array
+	atomic_t	count;			// number of entries used
+	phys_addr_t	next;			// pa of next struct instance
+	struct {
+		phys_addr_t	base;
+		phys_addr_t	size;
+	} entry[];
+};
 
 #endif /* _LINUX_EFI_H */

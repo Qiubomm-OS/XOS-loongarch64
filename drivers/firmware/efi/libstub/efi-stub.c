@@ -3,6 +3,11 @@
 
 #include "efistub.h"
 
+#define EFI_RT_VIRTUAL_BASE	SZ_512M
+
+static u64 virtmap_base = EFI_RT_VIRTUAL_BASE;
+static bool flat_va_mapping = (EFI_RT_VIRTUAL_OFFSET != 0);
+
 struct screen_info * __weak alloc_screen_info(void)
 {
 	return &screen_info;
@@ -45,6 +50,29 @@ efi_status_t efi_alloc_virtmap(efi_memory_desc_t **virtmap,
 			   (void **)virtmap);
 }
 
+static void install_memreserve_table(void)
+{
+	struct linux_efi_memreserve *rsv;
+	efi_guid_t memreserve_table_guid = LINUX_EFI_MEMRESERVE_TABLE_GUID;
+	efi_status_t status;
+
+	status = efi_bs_call(allocate_pool, EFI_LOADER_DATA, sizeof(*rsv),
+			     (void **)&rsv);
+	if (status != EFI_SUCCESS) {
+		efi_err("Failed to allocate memreserve entry!\n");
+		return;
+	}
+
+	rsv->next = 0;
+	rsv->size = 0;
+	atomic_set(&rsv->count, 0);
+
+	status = efi_bs_call(install_configuration_table,
+			     &memreserve_table_guid, rsv);
+	if (status != EFI_SUCCESS)
+		efi_err("Failed to install memreserve config table!\n");
+}
+
 efi_status_t efi_stub_common(efi_handle_t handle,
 			     efi_loaded_image_t *image,
 			     unsigned long image_addr,
@@ -59,6 +87,71 @@ efi_status_t efi_stub_common(efi_handle_t handle,
 
 	efi_novamap |= !(get_supported_rt_services() &
 			 EFI_RT_SUPPORTED_SET_VIRTUAL_ADDRESS_MAP);
+
+	install_memreserve_table();
 	
 	return status;
+}
+
+/*
+ * efi_get_virtmap() - create a virtual mapping for the EFI memory map
+ *
+ * This function populates the virt_addr fields of all memory region descriptors
+ * in @memory_map whose EFI_MEMORY_RUNTIME attribute is set. Those descriptors
+ * are also copied to @runtime_map, and their total count is returned in @count.
+ */
+void efi_get_virtmap(efi_memory_desc_t *memory_map, unsigned long map_size,
+		     unsigned long desc_size, efi_memory_desc_t *runtime_map,
+		     int *count)
+{
+	u64 efi_virt_base = virtmap_base;
+	efi_memory_desc_t *in, *out = runtime_map;
+	int l;
+
+	*count = 0;
+
+	for (l = 0; l < map_size; l += desc_size) {
+		u64 paddr, size;
+
+		in = (void *)memory_map + l;
+		if (!(in->attribute & EFI_MEMORY_RUNTIME))
+			continue;
+
+		paddr = in->phys_addr;
+		size = in->num_pages * EFI_PAGE_SIZE;
+
+		in->virt_addr = in->phys_addr + EFI_RT_VIRTUAL_OFFSET;
+		if (efi_novamap) {
+			continue;
+		}
+
+		/*
+		 * Make the mapping compatible with 64k pages: this allows
+		 * a 4k page size kernel to kexec a 64k page size kernel and
+		 * vice versa.
+		 */
+		if (!flat_va_mapping) {
+
+			paddr = round_down(in->phys_addr, SZ_64K);
+			size += in->phys_addr - paddr;
+
+			/*
+			 * Avoid wasting memory on PTEs by choosing a virtual
+			 * base that is compatible with section mappings if this
+			 * region has the appropriate size and physical
+			 * alignment. (Sections are 2 MB on 4k granule kernels)
+			 */
+			if (IS_ALIGNED(in->phys_addr, SZ_2M) && size >= SZ_2M)
+				efi_virt_base = round_up(efi_virt_base, SZ_2M);
+			else
+				efi_virt_base = round_up(efi_virt_base, SZ_64K);
+
+			in->virt_addr += efi_virt_base - paddr;
+			efi_virt_base += size;
+		}
+
+		memcpy(out, in, desc_size);
+		out = (void *)out + desc_size;
+		++*count;
+	}
 }

@@ -1,6 +1,8 @@
 #ifndef _LINUX_TYPES_H
 #define _LINUX_TYPES_H
 
+#ifndef __ASSEMBLY__
+
 #define asmlinkage __attribute__((regparm(0)))
 
 #define ARRAY_SIZE(x) (sizeof(x) / sizeof((x)[0]))
@@ -49,5 +51,10 @@ typedef struct {
 typedef struct {
 	int counter;
 } atomic_t;
+
+#define _ULCAST_ (unsigned long)
+#define _U64CAST_ (u64)
+
+#endif /* !__ASSEMBLY__ */
 
 #endif /* _LINUX_TYPES_ */
