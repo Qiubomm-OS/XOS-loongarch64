@@ -50,7 +50,7 @@ efi_status_t efi_stub_common(efi_handle_t handle,
 			     unsigned long image_addr,
 			     char *cmdline_ptr)
 {
-	struct screen_info *si = NULL;
+	// struct screen_info *si = NULL;
 	efi_status_t status;
 
 	status = check_platform_features();

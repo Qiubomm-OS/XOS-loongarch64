@@ -10,6 +10,7 @@ CC = /opt/cross-tools/bin/loongarch64-unknown-linux-gnu-gcc
 LD = /opt/cross-tools/bin/loongarch64-unknown-linux-gnu-ld
 OBJCOPY = /opt/cross-tools/bin/loongarch64-unknown-linux-gnu-objcopy
 ASM = nasm
+QEMU = ../qemu-7.2.0/build/qemu-system-loongarch64
 
 C_FLAGS = -nostdinc -I./arch/loongarch/include -I./include -I./arch/loongarch/include/uapi \
 	-I./arch/loongarch/include/generated/uapi -Wall -Wundef -Werror=strict-prototypes -Wno-trigraphs -fno-strict-aliasing \
@@ -91,20 +92,10 @@ link:
 clean:
 	$(RM) $(S_OBJECTS) $(C_OBJECTS) kernel kernel.efi
 
-.PHONY:update_image
-
-.PHONY:mount_image
-mount_image:
-	sudo mount -o loop ./hd.img ./hdisk/
-
-.PHONY:umount_image
-umount_image:
-	sudo umount ./hdisk
-
 .PHONY:qemu
 qemu:
-	qemu-system-i386 -serial stdio -drive file=./hd.img,format=raw,index=0,media=disk -m 512
+	$(QEMU) -machine virt -m 4G -cpu la464 -smp 1 -bios ../qemu-binary/QEMU_EFI.fd -kernel kernel.efi -nographic
 
 .PHONY:debug
 debug:
-	qemu-system-i386 -serial stdio -S -s -drive file=./hd.img,format=raw,index=0,media=disk -m 512
+	$(QEMU) -machine virt -m 4G -cpu la464 -smp 1 -bios ../qemu-binary/QEMU_EFI.fd -kernel kernel.efi -nographic -s -S
