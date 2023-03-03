@@ -13,7 +13,7 @@ ASM = nasm
 QEMU = ../qemu-7.2.0/build/qemu-system-loongarch64
 
 C_FLAGS = -nostdinc -I./arch/loongarch/include -I./include -I./arch/loongarch/include/uapi \
-	-I./arch/loongarch/include/generated/uapi -Wall -Wundef -Werror=strict-prototypes -Wno-trigraphs -fno-strict-aliasing \
+	-Wall -Wundef -Werror=strict-prototypes -Wno-trigraphs -fno-strict-aliasing \
 	-fno-common -fshort-wchar -fno-PIE -Werror=implicit-function-declaration -Werror=implicit-int -Werror=return-type \
 	-Wno-format-security -funsigned-char -std=gnu11 -mabi=lp64s -G0 -pipe -msoft-float -mexplicit-relocs -ffreestanding \
 	-mno-check-zero-division -fno-asynchronous-unwind-tables -isystem /opt/cross-tools/lib/gcc/loongarch64-unknown-linux-gnu/13.0.0/include \
