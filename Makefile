@@ -82,6 +82,10 @@ drivers/firmware/efi/libstub/mem.o: drivers/firmware/efi/libstub/mem.c
 	@echo 编译代码文件 $< ...
 	@$(CC) $(C_FLAGS) -o $@ $<
 
+arch/loongarch/kernel/setup.o: arch/loongarch/kernel/setup.c
+	@echo 编译代码文件 $< ...
+	@$(CC) $(C_FLAGS) -o $@ $<
+
 link:
 	@echo 链接内核文件...
 	mkdir -p build/
