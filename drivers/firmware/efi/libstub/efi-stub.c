@@ -89,6 +89,8 @@ efi_status_t efi_stub_common(efi_handle_t handle,
 			 EFI_RT_SUPPORTED_SET_VIRTUAL_ADDRESS_MAP);
 
 	install_memreserve_table();
+
+	status = efi_boot_kernel(handle, image, image_addr, cmdline_ptr);
 	
 	return status;
 }

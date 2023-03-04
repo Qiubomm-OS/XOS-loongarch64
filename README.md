@@ -89,11 +89,11 @@ make all
 loongson/XOS-loongarch64/kernel.efi   # loongson 为上述工作目录
 ```
 
-### 3 获取UEFI启动引导、根文件系统（rootfs）
+### 3 获取UEFI启动引导
 
 回到工作目录 loongson 下。
 
-initrd 通过 busybox 生成， 这里提供制作好的范例，下载地址：
+这里提供制作好的UEFI启动引导，下载地址：
 
 ```bash
 git clone https://github.com/yangxiaojuan-loongson/qemu-binary

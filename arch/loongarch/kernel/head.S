@@ -121,6 +121,9 @@ SYM_DATA(kernel_offset, .long kernel_offset - _text);
 
 SYM_CODE_START(kernel_entry)			# kernel entry point
 
+0:
+	b 0
+
 SYM_CODE_END(kernel_entry)
 
 SYM_ENTRY(kernel_entry_end, SYM_L_GLOBAL, SYM_A_NONE)
