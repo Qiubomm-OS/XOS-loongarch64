@@ -165,7 +165,7 @@ SYM_CODE_START(kernel_entry)			# kernel entry point
 	/* GPR21 used for percpu base (runtime), initialized as 0 */
 	move		u0, zero
 
-	/* la.pcrel	tp, init_thread_union */
+	la.pcrel	tp, init_thread_union
 	/* Set the SP after an empty pt_regs.  */
 	PTR_LI		sp, (THREAD_SIZE - PT_SIZE)
 	PTR_ADD		sp, sp, tp
