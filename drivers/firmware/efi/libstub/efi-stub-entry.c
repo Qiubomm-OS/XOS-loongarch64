@@ -75,6 +75,5 @@ efi_status_t __efiapi efi_pe_entry(efi_handle_t handle, efi_system_table_t *syst
 
 	status = efi_stub_common(handle, image, image_addr, cmdline_ptr);
 
-	// while(1);
 	return status;
 }

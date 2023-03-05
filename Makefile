@@ -86,6 +86,10 @@ arch/loongarch/kernel/setup.o: arch/loongarch/kernel/setup.c
 	@echo 编译代码文件 $< ...
 	@$(CC) $(C_FLAGS) -o $@ $<
 
+init/main.o: init/main.c
+	@echo 编译代码文件 $< ...
+	@$(CC) $(C_FLAGS) -o $@ $<
+
 link:
 	@echo 链接内核文件...
 	mkdir -p build/

@@ -171,7 +171,7 @@ SYM_CODE_START(kernel_entry)			# kernel entry point
 	PTR_ADD		sp, sp, tp
 	set_saved_sp	sp, t0, t1
 
-	/* bl		start_kernel */
+	bl		start_kernel
 	/* ASM_BUG() */
 
 SYM_CODE_END(kernel_entry)
