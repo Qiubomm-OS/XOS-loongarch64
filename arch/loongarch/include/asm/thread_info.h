@@ -34,13 +34,13 @@ struct thread_info {
 /*
  * macros/functions for gaining access to the thread information structure
  */
-// #define INIT_THREAD_INFO(tsk)			\
-// {						\
-// 	.task		= &tsk,			\
-// 	.flags		= _TIF_FIXADE,		\
-// 	.cpu		= 0,			\
-// 	.preempt_count	= INIT_PREEMPT_COUNT,	\
-// }
+#define INIT_THREAD_INFO(tsk)			\
+{						\
+	.task		= &tsk,			\
+	.flags		= _TIF_FIXADE,		\
+	.cpu		= 0,			\
+	.preempt_count	= INIT_PREEMPT_COUNT,	\
+}
 
 /* How to get the thread information struct from C. */
 // register struct thread_info *__current_thread_info __asm__("$tp");
