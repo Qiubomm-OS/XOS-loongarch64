@@ -46,12 +46,12 @@ efi_status_t efi_boot_kernel(void *handle, efi_loaded_image_t *image,
 		return status;
 	}
 
-	// efi_info("Exiting boot services\n");
+	efi_info("Exiting boot services\n");
 
 	efi_novamap = false;
-	// status = efi_exit_boot_services(handle, &priv, exit_boot_func);
-	// if (status != EFI_SUCCESS)
-	// 	return status;
+	status = efi_exit_boot_services(handle, &priv, exit_boot_func);
+	if (status != EFI_SUCCESS)
+		return status;
 
 	/* Install the new virtual address map */
 	efi_rt_call(set_virtual_address_map,
@@ -64,7 +64,6 @@ efi_status_t efi_boot_kernel(void *handle, efi_loaded_image_t *image,
 
 	real_kernel_entry = (void *)kernel_entry_address();
 
-	efi_puts("real_kernel_entry\n");
 	real_kernel_entry(true, (unsigned long)cmdline_ptr,
 			  (unsigned long)efi_system_table);
 }

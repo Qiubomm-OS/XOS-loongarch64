@@ -2,12 +2,12 @@
 #include <linux/printk.h>
 #include <linux/sched.h>
 #include <linux/task.h>
+#include <linux/init.h>
 
 union thread_union init_thread_union;
 
-void start_kernel(void)
+void __init __no_sanitize_address start_kernel(void)
 {
-	// efi_puts("start_kernel.\n");
 	local_irq_disable();
 	while(1);
 }

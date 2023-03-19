@@ -2,7 +2,9 @@
 #ifndef _LINUX_INIT_H
 #define _LINUX_INIT_H
 
-#define __init		__section(".init.text") __cold  __latent_entropy __noinitretpoline
+#include <linux/compiler_attributes.h>
+
+#define __init		__section(".init.text") __cold
 #define __initdata	__section(".init.data")
 #define __initconst	__section(".init.rodata")
 #define __exitdata	__section(".exit.data")
