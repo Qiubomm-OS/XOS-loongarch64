@@ -4,6 +4,7 @@
 		"typeinfo": "cpp",
 		"numeric": "c",
 		"*.tcc": "cpp",
-		"algorithm": "cpp"
+		"algorithm": "cpp",
+		"new": "cpp"
 	}
 }

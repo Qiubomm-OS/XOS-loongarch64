@@ -154,4 +154,6 @@ do {										\
 	}									\
 } while (0)
 
+#include <linux/compiler.h>
+
 #endif /* __ASM_BARRIER_H */
