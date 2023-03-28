@@ -1,6 +1,8 @@
 #ifndef __LINUX_COMPILER_TYPES_H
 #define __LINUX_COMPILER_TYPES_H
 
+#define __force
+
 #define __scalar_type_to_expr_cases(type)				\
 		unsigned type:	(unsigned type)0,			\
 		signed type:	(signed type)0

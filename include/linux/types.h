@@ -55,6 +55,31 @@ typedef struct {
 #define _ULCAST_ (unsigned long)
 #define _U64CAST_ (u64)
 
+#ifdef __CHECKER__
+#define __bitwise	__attribute__((bitwise))
+#else
+#define __bitwise
+#endif
+
+/* The kernel doesn't use this legacy form, but user space does */
+#define __bitwise__ __bitwise
+
+typedef __u16 __bitwise __le16;
+typedef __u16 __bitwise __be16;
+typedef __u32 __bitwise __le32;
+typedef __u32 __bitwise __be32;
+typedef __u64 __bitwise __le64;
+typedef __u64 __bitwise __be64;
+
+typedef __u16 __bitwise __sum16;
+typedef __u32 __bitwise __wsum;
+
+#define __aligned_u64 __u64 __attribute__((aligned(8)))
+#define __aligned_be64 __be64 __attribute__((aligned(8)))
+#define __aligned_le64 __le64 __attribute__((aligned(8)))
+
+typedef unsigned __bitwise __poll_t;
+
 #endif /* !__ASSEMBLY__ */
 
 #endif /* _LINUX_TYPES_ */
