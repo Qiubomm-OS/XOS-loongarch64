@@ -1,5 +1,7 @@
+#include <linux/ns16550a.h>
 #include <asm-generic/io.h>
-#include <linux/types.h>
+
+#define UART_BASE_ADDR	0x1fe001e0
 
 /* 串口寄存器偏移地址 */
 #define UART_RX      0       // 接收数据寄存器
@@ -26,7 +28,7 @@
 uint16_t divisor = 0;       // 用于存储波特率分频系数
 
 /* 初始化串口设备 */
-void serial_init(uint32_t base_addr, uint32_t baud_rate)
+void serial_ns16550a_init(uint64_t base_addr, uint32_t baud_rate)
 {
 	uint16_t divisor_value = 0;
    	uint8_t lcr_value = 0;
@@ -55,7 +57,7 @@ void serial_init(uint32_t base_addr, uint32_t baud_rate)
 }
 
 /* 发送一个字符 */
-void serial_putc(uint32_t base_addr, char c)
+void serial_ns16550a_putc(uint64_t base_addr, char c)
 {
     while ((inb(base_addr + UART_LSR) & UART_LSR_THRE) == 0)
         ;  // 等待发送缓冲区为空
@@ -63,7 +65,7 @@ void serial_putc(uint32_t base_addr, char c)
 }
 
 /* 接收一个字符 */
-char serial_getc(uint32_t base_addr)
+char serial_ns16550a_getc(uint64_t base_addr)
 {
     while ((inb(base_addr + UART_LSR) & UART_LSR_DR) == 0)
         ;  // 等待接收缓冲区非空
