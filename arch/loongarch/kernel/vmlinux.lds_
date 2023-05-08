@@ -1,0 +1,53 @@
+PECOFF_FILE_ALIGN = 0x200;
+PECOFF_SEGMENT_ALIGN = 0x10000;
+OUTPUT_ARCH(loongarch)
+ENTRY(kernel_entry)
+PHDRS {
+ text PT_LOAD FLAGS(7);
+ note PT_NOTE FLAGS(4);
+}
+SECTIONS
+{
+        . = 0x9000000000200000;
+        _text = .;
+        .head.text : AT(ADDR(.head.text) - 0) { 
+                KEEP(*(.head.text))
+        }
+        
+        . = ALIGN(PECOFF_SEGMENT_ALIGN);
+        .text : {
+                . = ALIGN(0);
+                *(.text .text.fixup)
+                *(.ref.text)
+        } :text = 0
+        
+        . = ALIGN(PECOFF_SEGMENT_ALIGN);
+        .got : ALIGN(16) { *(.got) }
+        
+        . = ALIGN(PECOFF_SEGMENT_ALIGN);
+        
+        __init_begin = .;
+        __inittext_begin = .;
+        __inittext_end = .;
+        __initdata_begin = .;
+        __initdata_end = .;
+        __init_end = .;
+        _sdata = .;
+        
+        .rodata : AT(ADDR(.rodata) - 0) {
+                *(.rodata) *(.rodata.*)
+        }
+        .data : AT(ADDR(.data) - 0) {
+                . = ALIGN(0x00004000); *(.data)
+        }
+
+        _edata = .;
+        
+        . = ALIGN(0);
+        .bss : AT(ADDR(.bss) - 0) { 
+                *(.bss) 
+        } 
+        
+        . = ALIGN(PECOFF_SEGMENT_ALIGN);
+        _end = .;
+}
