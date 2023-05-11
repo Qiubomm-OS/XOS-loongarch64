@@ -18,46 +18,47 @@ CFLAGS	=-nostdinc -I../../../../arch/loongarch/include/ -I../../../../include/ -
 OBJS = loongarch-stub.o efi-stub-entry.o efi-stub-helper.o efi-stub.o loongarch.o mem.o printk.o screen_info.o systable.o vsprintf.o
 
 libstub.o: $(OBJS)
-	$(LD) -r $(LDFLAGS) -o $@ $(OBJS)
+	@echo LD $(PWD)/$@
+	@$(LD) -r $(LDFLAGS) -o $@ $(OBJS)
 
 loongarch-stub.o: loongarch-stub.c
-	@echo 编译代码文件 $< ...
+	@echo CC $(PWD)/$@
 	@$(CC) $(CFLAGS) -o $@ $<
 
 efi-stub-entry.o: efi-stub-entry.c
-	@echo 编译代码文件 $< ...
+	@echo CC $(PWD)/$@
 	@$(CC) $(CFLAGS) -o $@ $<
 
 efi-stub-helper.o: efi-stub-helper.c
-	@echo 编译代码文件 $< ...
+	@echo CC $(PWD)/$@
 	@$(CC) $(CFLAGS) -o $@ $<
 
 efi-stub.o: efi-stub.c
-	@echo 编译代码文件 $< ...
+	@echo CC $(PWD)/$@
 	@$(CC) $(CFLAGS) -o $@ $<
 
 loongarch.o: loongarch.c
-	@echo 编译代码文件 $< ...
+	@echo CC $(PWD)/$@
 	@$(CC) $(CFLAGS) -o $@ $<
 
 mem.o: mem.c
-	@echo 编译代码文件 $< ...
+	@echo CC $(PWD)/$@
 	@$(CC) $(CFLAGS) -o $@ $<
 
 printk.o: printk.c
-	@echo 编译代码文件 $< ...
+	@echo CC $(PWD)/$@
 	@$(CC) $(CFLAGS) -o $@ $<
 
 screen_info.o: screen_info.c
-	@echo 编译代码文件 $< ...
+	@echo CC $(PWD)/$@
 	@$(CC) $(CFLAGS) -o $@ $<
 
 systable.o: systable.c
-	@echo 编译代码文件 $< ...
+	@echo CC $(PWD)/$@
 	@$(CC) $(CFLAGS) -o $@ $<
 
 vsprintf.o: vsprintf.c
-	@echo 编译代码文件 $< ...
+	@echo CC $(PWD)/$@
 	@$(CC) $(CFLAGS) -o $@ $<
 
 .PHONY: qemu

@@ -18,19 +18,20 @@ CFLAGS	=-nostdinc -I../include -I../../../include -I../include/uapi -I../../../i
 OBJS  = head.o setup.o
 
 kernel.o: $(OBJS)
+	@echo LD $(PWD)/$@
 	@$(LD) -r $(LD_FLAGS) -o $@ $(OBJS)
 
 head.o: head.S
-	@echo 编译代码文件 $< ...
-	$(CC) -nostdinc -I../include \
+	@echo CC $(PWD)/$@
+	@$(CC) -nostdinc -I../include \
 	-I../../../include -I../include/uapi -I../../../include/uapi \
 	-D__ASSEMBLY__ -fno-PIE -mabi=lp64s -G0 -pipe -msoft-float -mexplicit-relocs \
 	-ffreestanding -mno-check-zero-division \
 	-c -o $@ $<
 
 setup.o: setup.c
-	@echo 编译代码文件 $< ...
-	$(CC) $(CFLAGS) -o $@ $<
+	@echo CC $(PWD)/$@
+	@$(CC) $(CFLAGS) -o $@ $<
 
 .PHONY: qemu
 clean:

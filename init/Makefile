@@ -18,10 +18,11 @@ CFLAGS	=-nostdinc -I../arch/loongarch/include/ -I../include/ -I../arch/loongarch
 OBJS = main.o
 
 init.o: main.o
-	$(LD) -r $(LDFLAGS) -o $@ $(OBJS)
+	@echo LD $(PWD)/$@
+	@$(LD) -r $(LDFLAGS) -o $@ $(OBJS)
 
 main.o: main.c
-	@echo 编译代码文件 $< ...
+	@echo CC $(PWD)/$@
 	@$(CC) $(CFLAGS) -o $@ $<
 
 .PHONY: qemu

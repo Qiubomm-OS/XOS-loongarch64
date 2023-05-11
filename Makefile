@@ -1,3 +1,5 @@
+export MAKEFLAGS=--no-print-directory
+
 QEMU 	= ../qemu-7.2.0/build/qemu-system-loongarch64
 AS	=/opt/cross-tools/bin/loongarch64-unknown-linux-gnu-gcc
 LD	=/opt/cross-tools/bin/loongarch64-unknown-linux-gnu-ld
@@ -20,35 +22,37 @@ CFLAGS	=-nostdinc -I./arch/loongarch/include -I./include -I./arch/loongarch/incl
 all:	Image
 
 Image: arch/loongarch/kernel/kernel.o drivers/firmware/efi/libstub/libstub.o drivers/serial/serial.o lib/lib.o init/init.o
-	mkdir -p build/
+	@echo LD ./kernel.o
+	@mkdir -p build/
 	@$(LD) $(LDFLAGS) arch/loongarch/kernel/kernel.o drivers/firmware/efi/libstub/libstub.o drivers/serial/serial.o lib/lib.o init/init.o -o kernel.o
-	$(OBJCOPY) -O binary --remove-section=.comment --remove-section=.note \
+	@echo OBJCOPY kernel.efi
+	@$(OBJCOPY) -O binary --remove-section=.comment --remove-section=.note \
 		--remove-section=.options --remove-section=.note.gnu.build-id \
 		-S kernel.o kernel.efi
 
 arch/loongarch/kernel/kernel.o:
-	(cd arch/loongarch/kernel; make)
+	@(cd arch/loongarch/kernel; make)
 
 drivers/firmware/efi/libstub/libstub.o:
-	(cd drivers/firmware/efi/libstub; make)
+	@(cd drivers/firmware/efi/libstub; make)
 
 drivers/serial/serial.o:
-	(cd drivers/serial; make)
+	@(cd drivers/serial; make)
 
 lib/lib.o:
-	(cd lib; make)
+	@(cd lib; make)
 
 init/init.o:
-	(cd init; make)
+	@(cd init; make)
 
 .PHONY: clean
 clean:
 	rm -f kernel.o kernel.efi build/kernel.map
-	(cd arch/loongarch/kernel; make clean)
-	(cd drivers/firmware/efi/libstub; make clean)
-	(cd drivers/serial; make clean)
-	(cd lib; make clean)
-	(cd init; make clean)
+	@(cd arch/loongarch/kernel; make clean)
+	@(cd drivers/firmware/efi/libstub; make clean)
+	@(cd drivers/serial; make clean)
+	@(cd lib; make clean)
+	@(cd init; make clean)
 
 .PHONY: qemu
 qemu:

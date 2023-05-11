@@ -18,10 +18,11 @@ CFLAGS	=-nostdinc -I../../arch/loongarch/include/ -I../../include/ -I../../arch/
 OBJS = ns16550a.o
 
 serial.o: ns16550a.o
-	$(LD) -r $(LDFLAGS) -o $@ $(OBJS)
+	@echo LD $(PWD)/$@
+	@$(LD) -r $(LDFLAGS) -o $@ $(OBJS)
 
 ns16550a.o: ns16550a.c
-	@echo 编译代码文件 $< ...
+	@echo CC $(PWD)/$@
 	@$(CC) $(CFLAGS) -o $@ $<
 
 .PHONY: qemu
