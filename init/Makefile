@@ -15,9 +15,15 @@ CFLAGS	=-nostdinc -I../arch/loongarch/include/ -I../include/ -I../arch/loongarch
 	-Werror=date-time -Werror=incompatible-pointer-types -Werror=designated-init -Wno-packed-not-aligned -fpie -Os -DDISABLE_BRANCH_PROFILING \
 	-ffreestanding -fno-stack-protector -mdirect-extern-access -g -c
 
+OBJS = main.o
+
 init.o: main.o
-	$(LD) -r $(LDFLAGS) -o $@ $<
+	$(LD) -r $(LDFLAGS) -o $@ $(OBJS)
 
 main.o: main.c
 	@echo 编译代码文件 $< ...
 	@$(CC) $(CFLAGS) -o $@ $<
+
+.PHONY: qemu
+clean:
+	rm -f $(OBJS) init.o

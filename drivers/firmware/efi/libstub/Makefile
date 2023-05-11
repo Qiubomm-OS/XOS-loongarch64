@@ -59,3 +59,7 @@ systable.o: systable.c
 vsprintf.o: vsprintf.c
 	@echo 编译代码文件 $< ...
 	@$(CC) $(CFLAGS) -o $@ $<
+
+.PHONY: qemu
+clean:
+	rm -f $(OBJS) libstub.o

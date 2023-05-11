@@ -31,3 +31,7 @@ head.o: head.S
 setup.o: setup.c
 	@echo 编译代码文件 $< ...
 	$(CC) $(CFLAGS) -o $@ $<
+
+.PHONY: qemu
+clean:
+	rm -f $(OBJS) kernel.o

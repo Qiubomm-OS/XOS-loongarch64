@@ -1,3 +1,4 @@
+QEMU 	= ../qemu-7.2.0/build/qemu-system-loongarch64
 AS	=/opt/cross-tools/bin/loongarch64-unknown-linux-gnu-gcc
 LD	=/opt/cross-tools/bin/loongarch64-unknown-linux-gnu-ld
 LDFLAGS	=-m elf64loongarch --no-warn-rwx-segments -T ./arch/loongarch/kernel/vmlinux.lds -Map ./build/kernel.map -G0 -n -nostdlib
@@ -39,3 +40,20 @@ lib/lib.o:
 
 init/init.o:
 	(cd init; make)
+
+.PHONY: clean
+clean:
+	rm -f kernel.o kernel.efi build/kernel.map
+	(cd arch/loongarch/kernel; make clean)
+	(cd drivers/firmware/efi/libstub; make clean)
+	(cd drivers/serial; make clean)
+	(cd lib; make clean)
+	(cd init; make clean)
+
+.PHONY: qemu
+qemu:
+	$(QEMU) -machine virt -m 4G -cpu la464 -smp 1 -bios ../qemu-binary/QEMU_EFI.fd -kernel kernel.efi -nographic
+
+.PHONY: debug
+debug:
+	$(QEMU) -machine virt -m 4G -cpu la464 -smp 1 -bios ../qemu-binary/QEMU_EFI.fd -kernel kernel.efi -nographic -s -S
