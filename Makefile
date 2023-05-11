@@ -19,12 +19,13 @@ CFLAGS	=-nostdinc -I./arch/loongarch/include -I./include -I./arch/loongarch/incl
 all:	Image
 
 Image: arch/loongarch/kernel/kernel.o drivers/firmware/efi/libstub/libstub.o drivers/serial/serial.o lib/lib.o init/init.o
+	mkdir -p build/
 	@$(LD) $(LDFLAGS) arch/loongarch/kernel/kernel.o drivers/firmware/efi/libstub/libstub.o drivers/serial/serial.o lib/lib.o init/init.o -o kernel.o
 	$(OBJCOPY) -O binary --remove-section=.comment --remove-section=.note \
 		--remove-section=.options --remove-section=.note.gnu.build-id \
-		-S kernel kernel.efi
+		-S kernel.o kernel.efi
 
-arch/loongarch/kernel/kernel.o: 
+arch/loongarch/kernel/kernel.o:
 	(cd arch/loongarch/kernel; make)
 
 drivers/firmware/efi/libstub/libstub.o:
