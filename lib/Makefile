@@ -15,15 +15,23 @@ CFLAGS	=-nostdinc -I../arch/loongarch/include/ -I../include/ -I../arch/loongarch
 	-Werror=date-time -Werror=incompatible-pointer-types -Werror=designated-init -Wno-packed-not-aligned -fpie -Os -DDISABLE_BRANCH_PROFILING \
 	-ffreestanding -fno-stack-protector -mdirect-extern-access -g -c
 
-OBJS = string.o
+OBJS = string.o ctype.o stdio.o
 
-lib.o: string.o
+lib.o: $(OBJS)
 	@echo LD $(PWD)/$@
 	@$(LD) -r $(LDFLAGS) -o $@ $(OBJS)
 
 string.o: string.c
 	@echo CC $(PWD)/$@
 	@$(CC) $(CFLAGS) -o $@ $<
+
+ctype.o: ctype.c
+	@echo CC $(PWD)/$@
+	@$(CC) $(CFLAGS) -o $@ $<
+
+stdio.o: stdio.c
+	@echo CC $(PWD)/$@
+	@$(CC) $(CFLAGS) -o $@ $<	
 
 .PHONY: qemu
 clean:

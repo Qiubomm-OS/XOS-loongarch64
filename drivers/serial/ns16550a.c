@@ -57,7 +57,7 @@ void serial_ns16550a_init(uint64_t base_addr, uint32_t baud_rate)
 }
 
 /* 发送一个字符 */
-void serial_ns16550a_putc(uint64_t base_addr, char c)
+void real_serial_ns16550a_putc(uint64_t base_addr, char c)
 {
     while ((inb(base_addr + UART_LSR) & UART_LSR_THRE) == 0)
         ;  // 等待发送缓冲区为空
@@ -65,9 +65,28 @@ void serial_ns16550a_putc(uint64_t base_addr, char c)
 }
 
 /* 接收一个字符 */
-char serial_ns16550a_getc(uint64_t base_addr)
+char real_serial_ns16550a_getc(uint64_t base_addr)
 {
     while ((inb(base_addr + UART_LSR) & UART_LSR_DR) == 0)
         ;  // 等待接收缓冲区非空
     return inb(base_addr + UART_RX);
+}
+
+void serial_ns16550a_putc(char c)
+{
+	real_serial_ns16550a_putc(UART_BASE_ADDR, c);
+}
+
+void serial_ns16550a_puts(char *str)
+{
+	char *ch = str;
+	while (*ch != '\0') {
+		serial_ns16550a_putc(*ch);
+		ch++;
+	}
+}
+
+char serial_ns16550a_getc(void)
+{
+	return real_serial_ns16550a_getc(UART_BASE_ADDR);
 }
