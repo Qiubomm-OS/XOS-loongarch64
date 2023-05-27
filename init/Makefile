@@ -15,13 +15,17 @@ CFLAGS	=-nostdinc -I../arch/loongarch/include/ -I../include/ -I../arch/loongarch
 	-Werror=date-time -Werror=incompatible-pointer-types -Werror=designated-init -Wno-packed-not-aligned -fpie -Os -DDISABLE_BRANCH_PROFILING \
 	-ffreestanding -fno-stack-protector -mdirect-extern-access -g -c
 
-OBJS = main.o
+OBJS = main.o init_task.o
 
-init.o: main.o
+init.o: $(OBJS)
 	@echo LD $(PWD)/$@
 	@$(LD) -r $(LDFLAGS) -o $@ $(OBJS)
 
 main.o: main.c
+	@echo CC $(PWD)/$@
+	@$(CC) $(CFLAGS) -o $@ $<
+
+init_task.o: init_task.c
 	@echo CC $(PWD)/$@
 	@$(CC) $(CFLAGS) -o $@ $<
 

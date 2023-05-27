@@ -10,8 +10,10 @@
 
 #ifndef __ASSEMBLY__
 
+#include <asm/regdef.h>
 #include <linux/size.h>
 #include <linux/types.h>
+#include <linux/preempt.h>
 
 /*
  * low level task data that entry.S needs immediate access to
@@ -21,7 +23,7 @@
  *   must also be changed
  */
 struct thread_info {
-	// struct task_struct	*task;		/* main task structure */
+	struct task_struct	*task;		/* main task structure */
 	unsigned long		flags;		/* low level flags */
 	unsigned long		tp_value;	/* thread pointer */
 	__u32			cpu;		/* current CPU */
@@ -42,13 +44,15 @@ struct thread_info {
 	.preempt_count	= INIT_PREEMPT_COUNT,	\
 }
 
-/* How to get the thread information struct from C. */
-// register struct thread_info *__current_thread_info __asm__("$tp");
+/**
+ * 从C中获取thread_info结构
+ */
+register struct thread_info *__current_thread_info __asm__("$tp");
 
-// static inline struct thread_info *current_thread_info(void)
-// {
-// 	return __current_thread_info;
-// }
+static inline struct thread_info *current_thread_info(void)
+{
+	return __current_thread_info;
+}
 
 // register unsigned long current_stack_pointer __asm__("$sp");
 
