@@ -54,7 +54,7 @@ static inline struct thread_info *current_thread_info(void)
 	return __current_thread_info;
 }
 
-// register unsigned long current_stack_pointer __asm__("$sp");
+register unsigned long current_stack_pointer __asm__("$sp");
 
 #endif /* !__ASSEMBLY__ */
 

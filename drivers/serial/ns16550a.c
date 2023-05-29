@@ -1,34 +1,11 @@
 #include <linux/ns16550a.h>
 #include <asm-generic/io.h>
 
-#define UART_BASE_ADDR	0x1fe001e0
-
-/* 串口寄存器偏移地址 */
-#define UART_RX      0       // 接收数据寄存器
-#define UART_TX      0       // 发送数据寄存器
-#define UART_IER     1       // 中断使能寄存器
-#define UART_IIR     2       // 中断状态寄存器
-#define UART_LCR     3       // 线路控制寄存器
-#define UART_MCR     4       // 调制解调器控制寄存器
-#define UART_LSR     5       // 线路状态寄存器
-#define UART_MSR     6       // 调制解调器状态寄存器
-#define UART_SR      7       // Scratch Register
-
-#define UART_DIV_LATCH_LOW  0   // 分频锁存器1
-#define UART_DIV_LATCH_HIGH 1   // 分频锁存器2
-
-/* 线路控制寄存器 (LCR) */
-#define UART_LCR_DLAB  0x80  // Divisor Latch Bit
-
-/* 线路状态寄存器 (LSR) */
-#define UART_LSR_DR   0x01   // Data Ready
-#define UART_LSR_THRE 0x20   // Transmit Holding Register Empty
-
 /* 波特率计算公式：Baud = Clock / (16 * Divisor) */
 uint16_t divisor = 0;       // 用于存储波特率分频系数
 
 /* 初始化串口设备 */
-void serial_ns16550a_init(uint64_t base_addr, uint32_t baud_rate)
+void real_serial_ns16550a_init(uint64_t base_addr, uint32_t baud_rate)
 {
 	uint16_t divisor_value = 0;
    	uint8_t lcr_value = 0;
@@ -72,9 +49,20 @@ char real_serial_ns16550a_getc(uint64_t base_addr)
     return inb(base_addr + UART_RX);
 }
 
+/* 初始化串口设备 */
+void serial_ns16550a_init(uint32_t baud_rate)
+{
+	real_serial_ns16550a_init(UART_BASE_ADDR, baud_rate);
+}
+
 void serial_ns16550a_putc(char c)
 {
 	real_serial_ns16550a_putc(UART_BASE_ADDR, c);
+}
+
+char serial_ns16550a_getc(void)
+{
+	return real_serial_ns16550a_getc(UART_BASE_ADDR);
 }
 
 void serial_ns16550a_puts(char *str)
@@ -84,9 +72,4 @@ void serial_ns16550a_puts(char *str)
 		serial_ns16550a_putc(*ch);
 		ch++;
 	}
-}
-
-char serial_ns16550a_getc(void)
-{
-	return real_serial_ns16550a_getc(UART_BASE_ADDR);
 }
