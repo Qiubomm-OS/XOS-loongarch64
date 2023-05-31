@@ -10,3 +10,6 @@ kernel.efi
 test.c
 test.s
 *.o
+include/config/
+include/generated/
+.*
