@@ -13,3 +13,4 @@ test.s
 include/config/
 include/generated/
 .*
+*.a

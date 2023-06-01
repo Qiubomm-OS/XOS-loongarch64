@@ -1172,9 +1172,9 @@ export MODULES_NSDEPS := $(extmod_prefix)modules.nsdeps
 ifeq ($(KBUILD_EXTMOD),)
 
 build-dir	:= .
-clean-dirs	:= $(sort . Documentation \
-		     $(patsubst %/,%,$(filter %/, $(core-) \
-			$(drivers-) $(libs-))))
+# clean-dirs	:= $(sort . Documentation \
+# 		     $(patsubst %/,%,$(filter %/, $(core-) \
+# 			$(drivers-) $(libs-))))
 
 export ARCH_CORE	:= $(core-y)
 export ARCH_LIB		:= $(filter %/, $(libs-y))
@@ -1274,12 +1274,16 @@ scripts: scripts_basic scripts_dtc
 
 PHONY += prepare archprepare
 
+# archprepare: outputmakefile archheaders archscripts scripts include/config/kernel.release \
+# 	asm-generic $(version_h) $(autoksyms_h) include/generated/utsrelease.h \
+# 	include/generated/compile.h include/generated/autoconf.h remove-stale-files
+
 archprepare: outputmakefile archheaders archscripts scripts include/config/kernel.release \
 	asm-generic $(version_h) $(autoksyms_h) include/generated/utsrelease.h \
 	include/generated/compile.h include/generated/autoconf.h remove-stale-files
 
 prepare0: archprepare
-	$(Q)$(MAKE) $(build)=scripts/mod
+# $(Q)$(MAKE) $(build)=scripts/mod
 	$(Q)$(MAKE) $(build)=. prepare
 
 # All the preparing..

@@ -116,9 +116,9 @@ libs-$(CONFIG_EFI_STUB) += $(objtree)/drivers/firmware/efi/libstub/lib.a
 drivers-$(CONFIG_PM)	+= arch/loongarch/power/
 
 ifeq ($(KBUILD_EXTMOD),)
-prepare: vdso_prepare
-vdso_prepare: prepare0
-	$(Q)$(MAKE) $(build)=arch/loongarch/vdso include/generated/vdso-offsets.h
+# prepare: vdso_prepare
+# vdso_prepare: prepare0
+# 	$(Q)$(MAKE) $(build)=arch/loongarch/vdso include/generated/vdso-offsets.h
 endif
 
 PHONY += vdso_install
