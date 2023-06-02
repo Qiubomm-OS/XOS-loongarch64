@@ -1,6 +1,6 @@
 .vscode/
 .idea/
-build/
+./build/
 cmake-build-debug/
 hdisk/
 a.out
