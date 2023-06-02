@@ -1,11 +1,24 @@
 # SPDX-License-Identifier: GPL-2.0
-VERSION = 0
-PATCHLEVEL = 0
-SUBLEVEL = 1
+VERSION = 6
+PATCHLEVEL = 2
+SUBLEVEL = 0
 EXTRAVERSION =
-NAME = XOS
+NAME = Hurr durr I'ma ninja sloth
 
-# 若命令行没有指定编译目标，则默认目标为__all
+# *DOCUMENTATION*
+# To see a list of typical targets execute "make help"
+# More info can be located in ./README
+# Comments in this file are targeted only to the developer, do not
+# expect to learn how to build the kernel reading this file.
+
+ifeq ($(filter undefine,$(.FEATURES)),)
+$(error GNU Make >= 3.82 is required. Your Make version is $(MAKE_VERSION))
+endif
+
+$(if $(filter __%, $(MAKECMDGOALS)), \
+	$(error targets prefixed with '__' are only for internal use))
+
+# That's our default target when none is given on the command line
 PHONY := __all
 __all:
 
@@ -30,6 +43,15 @@ ifneq ($(sub_make_done),1)
 # Do not use make's built-in rules and variables
 # (this increases performance and avoids hard-to-debug behaviour)
 MAKEFLAGS += -rR
+
+# Avoid funny character set dependencies
+unexport LC_ALL
+LC_COLLATE=C
+LC_NUMERIC=C
+export LC_COLLATE LC_NUMERIC
+
+# Avoid interference with shell env settings
+unexport GREP_OPTIONS
 
 # Beautify output
 # ---------------------------------------------------------------------------
@@ -100,10 +122,6 @@ export quiet Q KBUILD_VERBOSE
 # See the file "Documentation/dev-tools/sparse.rst" for more details,
 # including where to get the "sparse" utility.
 
-# 源代码检查
-#
-# 使用'make C=1'，仅仅检查重新编译的文件。
-# 使用'make C=2'，将对'所有'源文件进行检查，而不管是否重新编译它。
 ifeq ("$(origin C)", "command line")
   KBUILD_CHECKSRC = $(C)
 endif
@@ -116,7 +134,6 @@ export KBUILD_CHECKSRC
 # Enable "clippy" (a linter) as part of the Rust compilation.
 #
 # Use 'make CLIPPY=1' to enable it.
-# Rust代码检查工具clippy
 ifeq ("$(origin CLIPPY)", "command line")
   KBUILD_CLIPPY := $(CLIPPY)
 endif
@@ -205,7 +222,6 @@ endif
 ifneq ($(filter 3.%,$(MAKE_VERSION)),)
 # 'MAKEFLAGS += -rR' does not immediately become effective for GNU Make 3.x
 # We need to invoke sub-make to avoid implicit rules in the top Makefile.
-# MAKEFLAGS += -rR 在 GNU Make 3.x 中不会立即生效。我们需要调用子级 make 命令来避免顶层 Makefile 中的隐式规则。
 need-sub-make := 1
 # Cancel implicit rules for this Makefile.
 $(this-makefile): ;
@@ -229,7 +245,6 @@ endif # need-sub-make
 endif # sub_make_done
 
 # We process the rest of the Makefile if this is the final invocation of make
-# 如果这是 make 的最后一次调用，将会处理 Makefile 的剩余部分
 ifeq ($(need-sub-make),)
 
 # Do not print "Entering directory ...",
@@ -1274,16 +1289,12 @@ scripts: scripts_basic scripts_dtc
 
 PHONY += prepare archprepare
 
-# archprepare: outputmakefile archheaders archscripts scripts include/config/kernel.release \
-# 	asm-generic $(version_h) $(autoksyms_h) include/generated/utsrelease.h \
-# 	include/generated/compile.h include/generated/autoconf.h remove-stale-files
-
 archprepare: outputmakefile archheaders archscripts scripts include/config/kernel.release \
 	asm-generic $(version_h) $(autoksyms_h) include/generated/utsrelease.h \
 	include/generated/compile.h include/generated/autoconf.h remove-stale-files
 
 prepare0: archprepare
-# $(Q)$(MAKE) $(build)=scripts/mod
+#	$(Q)$(MAKE) $(build)=scripts/mod
 	$(Q)$(MAKE) $(build)=. prepare
 
 # All the preparing..
