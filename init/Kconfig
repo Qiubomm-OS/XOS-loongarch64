@@ -1,20 +1,4 @@
 # SPDX-License-Identifier: GPL-2.0-only
-config CC_VERSION_TEXT
-	string
-	default "$(CC_VERSION_TEXT)"
-	help
-	  This is used in unclear ways:
-
-	  - Re-run Kconfig when the compiler is updated
-	    The 'default' property references the environment variable,
-	    CC_VERSION_TEXT so it is recorded in include/config/auto.conf.cmd.
-	    When the compiler is updated, Kconfig will be invoked.
-
-	  - Ensure full rebuild when the compiler is updated
-	    include/linux/compiler-version.h contains this option in the comment
-	    line so fixdep adds include/config/CC_VERSION_TEXT into the
-	    auto-generated dependency. When the compiler is updated, syncconfig
-	    will touch it and then every file will be rebuilt.
 
 config CONSTRUCTORS
 	bool

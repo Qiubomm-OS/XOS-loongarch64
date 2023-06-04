@@ -1,4 +1,4 @@
-#include <dim-sum/kbuild.h>
+#include <linux/kbuild.h>
 #include <linux/mod_devicetable.h>
 
 #define DEVID(devid) DEFINE(SIZE_##devid, sizeof(struct devid))

@@ -163,15 +163,15 @@ static inline void csr_write32(u32 val, u32 reg)
 	__builtin_loongarch_csrwr_w(val, reg);
 }
 
-static inline void csr_write64(u64 val, u32 reg)
-{
-	__builtin_loongarch_csrwr_d(val, reg);
-}
+// static inline void csr_write64(u64 val, u32 reg)
+// {
+// 	__builtin_loongarch_csrwr_d(val, reg);
+// }
 
-static inline u32 csr_xchg32(u32 val, u32 mask, u32 reg)
-{
-	return __builtin_loongarch_csrxchg_w(val, mask, reg);
-}
+// static inline u32 csr_xchg32(u32 val, u32 mask, u32 reg)
+// {
+// 	return __builtin_loongarch_csrxchg_w(val, mask, reg);
+// }
 
 static inline u64 csr_xchg64(u64 val, u64 mask, u32 reg)
 {
