@@ -344,7 +344,7 @@ scripts: scripts_basic include/config/auto.conf include/config/tristate.conf
 init-y		:= init/
 drivers-y	:= drivers/
 libs-y		:= lib/
-core-y		:= kernel/
+# core-y		:= kernel/
 
 # 构建目标需要引用配置文件
 ifeq ($(dot-config),1)
@@ -545,7 +545,8 @@ usr-y	:= $(patsubst %/, %/built-in.o, $(usr-y))
 # System.map is generated to document addresses of all kernel symbols
 
 vmlinux-init := $(head-y) $(init-y)
-vmlinux-main := $(core-y) $(libs-y) $(blk-y) $(drivers-y) $(net-y) $(usr-y)
+# vmlinux-main := $(core-y) $(libs-y) $(blk-y) $(drivers-y) $(net-y) $(usr-y)
+vmlinux-main := $(core-y) $(blk-y) $(drivers-y) $(net-y) $(usr-y)
 vmlinux-all  := $(vmlinux-init) $(vmlinux-main)
 vmlinux-lds  := arch/$(SRCARCH)/kernel/vmlinux.lds
 export KBUILD_VMLINUX_OBJS := $(vmlinux-all)

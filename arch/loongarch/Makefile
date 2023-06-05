@@ -10,7 +10,7 @@
 #
 # Copyright (C) 1995-2001 by Russell King
 
-LDFLAGS_vmlinux	:=-p --no-undefined -X
+LDFLAGS_vmlinux	:=-m elf64loongarch --no-undefined -X -G0 -static -n -nostdlib --no-warn-rwx-segments -n
 CPPFLAGS_vmlinux.lds = -DTEXT_OFFSET=$(TEXT_OFFSET)
 OBJCOPYFLAGS	:=-O binary -R .note -R .note.gnu.build-id -R .comment -S
 GZFLAGS		:=-9
@@ -47,6 +47,7 @@ endif
 export	TEXT_OFFSET GZFLAGS
 
 # core-y		+= arch/loongarch/kernel/ arch/loongarch/mm/
+core-y		+= arch/loongarch/kernel/
 #core-$(CONFIG_NET) += arch/loongarch/net/
 #core-$(CONFIG_KVM) += arch/loongarch/kvm/
 #core-$(CONFIG_XEN) += arch/loongarch/xen/
