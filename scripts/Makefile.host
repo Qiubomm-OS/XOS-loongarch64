@@ -76,8 +76,8 @@ __hostc_flags	= -I$(obj) $(call flags,_hostc_flags)
 __hostcxx_flags	= -I$(obj) $(call flags,_hostcxx_flags)
 endif
 
-hostc_flags    = -Wp,-MD,$(depfile) $(__hostc_flags)
-hostcxx_flags  = -Wp,-MD,$(depfile) $(__hostcxx_flags)
+hostc_flags    = -Wp,-MMD,$(depfile) $(__hostc_flags)
+hostcxx_flags  = -Wp,-MMD,$(depfile) $(__hostcxx_flags)
 
 #####
 # Compile programs on the host
