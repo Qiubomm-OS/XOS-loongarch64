@@ -692,29 +692,7 @@
 #define INIT_DATA							\
 	KEEP(*(SORT(___kentry+*)))					\
 	*(.init.data init.data.*)					\
-	MEM_DISCARD(init.data*)						\
-	KERNEL_CTORS()							\
-	MCOUNT_REC()							\
 	*(.init.rodata .init.rodata.*)					\
-	FTRACE_EVENTS()							\
-	TRACE_SYSCALLS()						\
-	KPROBE_BLACKLIST()						\
-	ERROR_INJECT_WHITELIST()					\
-	MEM_DISCARD(init.rodata)					\
-	CLK_OF_TABLES()							\
-	RESERVEDMEM_OF_TABLES()						\
-	TIMER_OF_TABLES()						\
-	CPU_METHOD_OF_TABLES()						\
-	CPUIDLE_METHOD_OF_TABLES()					\
-	KERNEL_DTB()							\
-	IRQCHIP_OF_MATCH_TABLE()					\
-	ACPI_PROBE_TABLE(irqchip)					\
-	ACPI_PROBE_TABLE(timer)						\
-	THERMAL_TABLE(governor)						\
-	EARLYCON_TABLE()						\
-	LSM_TABLE()							\
-	EARLY_LSM_TABLE()						\
-	KUNIT_TABLE()
 
 #define INIT_TEXT							\
 	*(.init.text .init.text.*)					\

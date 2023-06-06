@@ -5,7 +5,7 @@
 uint16_t divisor = 0;       // 用于存储波特率分频系数
 
 /* 初始化串口设备 */
-void real_serial_ns16550a_init(uint64_t base_addr, uint32_t baud_rate)
+static void real_serial_ns16550a_init(uint64_t base_addr, uint32_t baud_rate)
 {
 	uint16_t divisor_value = 0;
    	uint8_t lcr_value = 0;
@@ -34,7 +34,7 @@ void real_serial_ns16550a_init(uint64_t base_addr, uint32_t baud_rate)
 }
 
 /* 发送一个字符 */
-void real_serial_ns16550a_putc(uint64_t base_addr, char c)
+static void real_serial_ns16550a_putc(uint64_t base_addr, char c)
 {
     while ((inb(base_addr + UART_LSR) & UART_LSR_THRE) == 0)
         ;  // 等待发送缓冲区为空
@@ -42,7 +42,7 @@ void real_serial_ns16550a_putc(uint64_t base_addr, char c)
 }
 
 /* 接收一个字符 */
-char real_serial_ns16550a_getc(uint64_t base_addr)
+static char real_serial_ns16550a_getc(uint64_t base_addr)
 {
     while ((inb(base_addr + UART_LSR) & UART_LSR_DR) == 0)
         ;  // 等待接收缓冲区非空

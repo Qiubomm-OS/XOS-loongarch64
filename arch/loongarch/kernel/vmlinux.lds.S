@@ -3,7 +3,7 @@
 #include <asm/asm-offsets.h>
 #include <asm/thread_info.h>
 
-#define PAGE_SIZE _PAGE_SIZE
+#define PAGE_SIZE 16384
 #define RO_EXCEPTION_TABLE_ALIGN	4
 
 /*
@@ -29,7 +29,7 @@ PHDRS {
 	note PT_NOTE FLAGS(4);	/* R__ */
 }
 
-jiffies	 = jiffies_64;
+/* jiffies	 = jiffies_64; */
 
 SECTIONS
 {
