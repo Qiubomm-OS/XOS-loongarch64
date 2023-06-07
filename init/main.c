@@ -8,6 +8,8 @@
 #include <asm/stdio.h>
 #include <linux/smp.h>
 
+extern void __init __no_sanitize_address start_kernel(void);
+
 bool early_boot_irqs_disabled;
 
 void __init __no_sanitize_address start_kernel(void)

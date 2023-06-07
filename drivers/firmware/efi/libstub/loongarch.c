@@ -3,6 +3,8 @@
 
 #include "efistub.h"
 
+extern unsigned long __weak kernel_entry_address(void);
+
 typedef void __noreturn (*kernel_entry_t)(bool efi, unsigned long cmdline,
 					  unsigned long systab);
 

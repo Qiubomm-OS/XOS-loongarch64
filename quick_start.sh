@@ -50,7 +50,7 @@ function gdb()
 
 function all()
 {
-	make ARCH=loongarch CROSS_COMPILE=$TOOLCHAINS -j4 Image && run && exit
+	make ARCH=loongarch CROSS_COMPILE=$TOOLCHAINS Image && run && exit
 }
 
 #
