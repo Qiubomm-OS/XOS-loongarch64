@@ -11,7 +11,7 @@ function distclean()
 
 function defconfig()
 {
-	make ARCH=loongarch CROSS_COMPILE=$TOOLCHAINS loongson3_defconfig
+	make ARCH=loongarch CROSS_COMPILE=$TOOLCHAINS defconfig
 }
 
 function menuconfig()

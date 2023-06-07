@@ -19,7 +19,7 @@ GZFLAGS		:=-9
 # LDFLAGS		+= -m elf64loongarch --no-warn-rwx-segments -T ./arch/loongarch/kernel/vmlinux.lds -G0 -n -nostdlib
 LDFLAGS		+= -m elf64loongarch --no-warn-rwx-segments -G0 -n -nostdlib
 
-KBUILD_DEFCONFIG := defconfig
+KBUILD_DEFCONFIG := loongson3_defconfig
 
 KBUILD_CFLAGS	+= -fno-pic
 KBUILD_CFLAGS	+= -nostdinc -I./arch/loongarch/include -I./include -I./arch/loongarch/include/uapi -I./include/uapi\
