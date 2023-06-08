@@ -18,6 +18,7 @@ GZFLAGS		:=-9
 # LDFLAGS		:= -m elf64loongarch -z noexecstack --no-warn-rwx-segments -r --build-id=sha1
 # LDFLAGS		+= -m elf64loongarch --no-warn-rwx-segments -T ./arch/loongarch/kernel/vmlinux.lds -G0 -n -nostdlib
 LDFLAGS		+= -m elf64loongarch --no-warn-rwx-segments -G0 -n -nostdlib
+KBUILD_AFLAGS	+= -nostdinc -D__ASSEMBLY__ -fno-PIE -mabi=lp64s -G0 -pipe -msoft-float -mexplicit-relocs -ffreestanding -mno-check-zero-division
 
 KBUILD_DEFCONFIG := loongson3_defconfig
 
