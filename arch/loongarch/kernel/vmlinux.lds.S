@@ -110,7 +110,7 @@ SECTIONS
 	.sdata : {
 		*(.sdata)
 	}
-	.edata_padding : { BYTE(0); . = ALIGN(PECOFF_FILE_ALIGN); }
+	/* .edata_padding : { BYTE(0); . = ALIGN(PECOFF_FILE_ALIGN); } */
 	_edata =  .;
 
 	BSS_SECTION(0, SZ_64K, 8)
