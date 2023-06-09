@@ -25,7 +25,7 @@ function run()
 	  -machine virt \
           -m 4G -cpu la464 -smp 1 \
           -bios ../qemu-binary/QEMU_EFI.fd \
-	  -kernel ./arch/arm64/boot/Image
+	  -kernel ./arch/loongarch/boot/Image
 }
 
 function rungdb()
@@ -40,7 +40,7 @@ function rungdb()
 
 function image()
 {
-	make ARCH=loongarch CROSS_COMPILE=$TOOLCHAINS -j1 Image
+	make ARCH=loongarch CROSS_COMPILE=$TOOLCHAINS -j1 Image V=1
 }
 
 function gdb()

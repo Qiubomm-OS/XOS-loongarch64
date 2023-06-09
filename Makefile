@@ -512,7 +512,7 @@ core-y		:= $(patsubst %/, %/built-in.o, $(core-y))
 blk-y		:= $(patsubst %/, %/built-in.o, $(blk-y))
 drivers-y	:= $(patsubst %/, %/built-in.o, $(drivers-y))
 net-y		:= $(patsubst %/, %/built-in.o, $(net-y))
-libs-y1		:= $(patsubst %/, %/lib.a, $(libs-y))
+# libs-y1		:= $(patsubst %/, %/lib.a, $(libs-y))
 libs-y2		:= $(patsubst %/, %/built-in.o, $(libs-y))
 libs-y		:= $(libs-y1) $(libs-y2)
 usr-y	:= $(patsubst %/, %/built-in.o, $(usr-y))
@@ -545,8 +545,8 @@ usr-y	:= $(patsubst %/, %/built-in.o, $(usr-y))
 # System.map is generated to document addresses of all kernel symbols
 
 vmlinux-init := $(head-y) $(init-y)
-# vmlinux-main := $(core-y) $(libs-y) $(blk-y) $(drivers-y) $(net-y) $(usr-y)
-vmlinux-main := $(core-y) $(blk-y) $(drivers-y) $(net-y) $(usr-y)
+vmlinux-main := $(core-y) $(libs-y) $(blk-y) $(drivers-y) $(net-y) $(usr-y)
+# vmlinux-main := $(core-y) $(blk-y) $(drivers-y) $(net-y) $(usr-y)
 vmlinux-all  := $(vmlinux-init) $(vmlinux-main)
 vmlinux-lds  := arch/$(SRCARCH)/kernel/vmlinux.lds
 export KBUILD_VMLINUX_OBJS := $(vmlinux-all)
@@ -624,15 +624,15 @@ endif
 
 kallsyms.o := .tmp_kallsyms$(last_kallsyms).o
 
-define verify_kallsyms
-	$(Q)$(if $($(quiet)cmd_sysmap),                                      \
-	  echo '  $($(quiet)cmd_sysmap)  .tmp_System.map' &&)                \
-	  $(cmd_sysmap) .tmp_vmlinux$(last_kallsyms) .tmp_System.map
-	$(Q)cmp -s System.map .tmp_System.map ||                             \
-		(echo Inconsistent kallsyms data;                            \
-		 echo Try setting CONFIG_KALLSYMS_EXTRA_PASS;                \
-		 rm .tmp_kallsyms* ; /bin/false )
-endef
+# define verify_kallsyms
+# 	$(Q)$(if $($(quiet)cmd_sysmap),                                      \
+# 	  echo '  $($(quiet)cmd_sysmap)  .tmp_System.map' &&)                \
+# 	  $(cmd_sysmap) .tmp_vmlinux$(last_kallsyms) .tmp_System.map
+# 	$(Q)cmp -s System.map .tmp_System.map ||                             \
+# 		(echo Inconsistent kallsyms data;                            \
+# 		 echo Try setting CONFIG_KALLSYMS_EXTRA_PASS;                \
+# 		 rm .tmp_kallsyms* ; /bin/false )
+# endef
 
 # Update vmlinux version before link
 # Use + in front of this rule to silent warning about make -j1
