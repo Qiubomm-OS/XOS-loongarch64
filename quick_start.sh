@@ -40,7 +40,7 @@ function rungdb()
 
 function image()
 {
-	make ARCH=loongarch CROSS_COMPILE=$TOOLCHAINS -j1 Image
+	make ARCH=loongarch CROSS_COMPILE=$TOOLCHAINS -j1 Image V=1
 }
 
 function gdb()
