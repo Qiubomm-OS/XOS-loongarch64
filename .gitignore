@@ -10,3 +10,15 @@ kernel.efi
 test.c
 test.s
 *.o
+scripts/
+.*
+Image
+asm-offsets.s
+bounds.s
+version.h
+System.map
+vmlinux
+vmlinux.lds
+Module.symvers
+include/config
+include/generated
