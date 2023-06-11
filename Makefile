@@ -203,7 +203,6 @@ USERINCLUDE    := \
 		-I$(srctree)/arch/$(hdr-arch)/include/uapi \
 		-I$(srctree)/include/uapi \
 		-Iinclude/generated/uapi \
-		-Iadapter/klibc/include/klibc/uapi \
         -include $(srctree)/include/linux/kconfig.h        
 
 KLIBCINCLUDE	:=	\
@@ -213,6 +212,20 @@ KLIBCINCLUDE	:=	\
 		-I$(srctree)/arch/$(hdr-arch)/include/uapi	
 
 # 定义包含文件路径
+# LINUXINCLUDE    := -I$(srctree)/arch/$(hdr-arch)/include -Iinclude \
+#                    $(if $(KBUILD_SRC), -I$(srctree)/include) \
+# 				   -Iarch/$(hdr-arch)/include/generated \
+# 				   -Iarch/$(hdr-arch)/include/generated/uapi \
+# 				   -include include/generated/autoconf.h	\
+# 				   -Iarch/$(hdr-arch)/include/generated/ \
+# 				   -Iinclude/asm-generic/ \
+# 				   -Iinclude/generated/ \
+# 				   -Iusr/include/asm-generic/ \
+# 				   -Iinclude/usr/asm-generic/ \
+# 				   -Iinclude \
+# 				   -Iadapter/klibc/include/ \
+# 				   $(USERINCLUDE)
+
 LINUXINCLUDE    := -I$(srctree)/arch/$(hdr-arch)/include -Iinclude \
                    $(if $(KBUILD_SRC), -I$(srctree)/include) \
 				   -Iarch/$(hdr-arch)/include/generated \
@@ -221,21 +234,18 @@ LINUXINCLUDE    := -I$(srctree)/arch/$(hdr-arch)/include -Iinclude \
 				   -Iarch/$(hdr-arch)/include/generated/ \
 				   -Iinclude/asm-generic/ \
 				   -Iinclude/generated/ \
-				   -Iusr/include/asm-generic/ \
-				   -Iinclude/usr/asm-generic/ \
 				   -Iinclude \
-				   -Iadapter/klibc/include/ \
 				   $(USERINCLUDE)
 
 KBUILD_CPPFLAGS := -D__KERNEL__
 
-KBUILD_CFLAGS   := -Wall -Wundef -Wstrict-prototypes -Wno-trigraphs \
-		   -fno-strict-aliasing -fno-common \
-		   -Wno-format-security \
-		   -fno-delete-null-pointer-checks \
-		   -fno-tree-scev-cprop -Wmissing-declarations -Wmissing-prototypes
+# KBUILD_CFLAGS   := -Wall -Wundef -Wstrict-prototypes -Wno-trigraphs \
+# 		   -fno-strict-aliasing -fno-common \
+# 		   -Wno-format-security \
+# 		   -fno-delete-null-pointer-checks \
+# 		   -fno-tree-scev-cprop -Wmissing-declarations -Wmissing-prototypes
 KBUILD_AFLAGS_KERNEL :=
-KBUILD_CFLAGS_KERNEL := -fno-tree-scev-cprop
+# KBUILD_CFLAGS_KERNEL := -fno-tree-scev-cprop
 KBUILD_AFLAGS   := -D__ASSEMBLY__
 KBUILD_AFLAGS_MODULE  := -DMODULE
 KBUILD_CFLAGS_MODULE  := -DMODULE
@@ -373,64 +383,64 @@ endif # $(dot-config)
 all: vmlinux
 
 #CONFIG_CC_OPTIMIZE_FOR_SIZE在auto.conf中被添加进来了
-ifdef CONFIG_CC_OPTIMIZE_FOR_SIZE
-KBUILD_CFLAGS	+= -O0
-else
-KBUILD_CFLAGS	+= -O0
-endif
+# ifdef CONFIG_CC_OPTIMIZE_FOR_SIZE
+# KBUILD_CFLAGS	+= -O0
+# else
+# KBUILD_CFLAGS	+= -O0
+# endif
 
 # 添加体系结构特定的Makefile
 include $(srctree)/arch/$(SRCARCH)/Makefile
 
 # 栈帧告警
-ifneq ($(CONFIG_FRAME_WARN),0)
-KBUILD_CFLAGS += $(call cc-option,-Wframe-larger-than=${CONFIG_FRAME_WARN})
-endif
+# ifneq ($(CONFIG_FRAME_WARN),0)
+# KBUILD_CFLAGS += $(call cc-option,-Wframe-larger-than=${CONFIG_FRAME_WARN})
+# endif
 
 # Force gcc to behave correct even for buggy distributions
-ifndef CONFIG_CC_STACKPROTECTOR
-KBUILD_CFLAGS += $(call cc-option, -fno-stack-protector)
-endif
+# ifndef CONFIG_CC_STACKPROTECTOR
+# KBUILD_CFLAGS += $(call cc-option, -fno-stack-protector)
+# endif
 
-ifdef CONFIG_FRAME_POINTER
-KBUILD_CFLAGS	+= -fno-omit-frame-pointer -fno-optimize-sibling-calls
-else
-KBUILD_CFLAGS	+= -fomit-frame-pointer
-endif
+# ifdef CONFIG_FRAME_POINTER
+# KBUILD_CFLAGS	+= -fno-omit-frame-pointer -fno-optimize-sibling-calls
+# else
+# KBUILD_CFLAGS	+= -fomit-frame-pointer
+# endif
 
 # ifdef CONFIG_DEBUG_INFO
-KBUILD_CFLAGS	+= -g
+# KBUILD_CFLAGS	+= -g
 KBUILD_AFLAGS	+= -gdwarf-2
 # endif
 
-ifdef CONFIG_DEBUG_INFO_REDUCED
-KBUILD_CFLAGS 	+= $(call cc-option, -femit-struct-debug-baseonly)
-endif
+# ifdef CONFIG_DEBUG_INFO_REDUCED
+# KBUILD_CFLAGS 	+= $(call cc-option, -femit-struct-debug-baseonly)
+# endif
 
-ifdef CONFIG_FUNCTION_TRACER
-KBUILD_CFLAGS	+= -pg
-endif
+# ifdef CONFIG_FUNCTION_TRACER
+# KBUILD_CFLAGS	+= -pg
+# endif
 
 # We trigger additional mismatches with less inlining
-ifdef CONFIG_DEBUG_SECTION_MISMATCH
-KBUILD_CFLAGS += $(call cc-option, -fno-inline-functions-called-once)
-endif
+# ifdef CONFIG_DEBUG_SECTION_MISMATCH
+# KBUILD_CFLAGS += $(call cc-option, -fno-inline-functions-called-once)
+# endif
 
 # arch Makefile may override CC so keep this after arch Makefile is included
 NOSTDINC_FLAGS += -nostdinc -isystem $(shell $(CC) -print-file-name=include)
 CHECKFLAGS     += $(NOSTDINC_FLAGS)
 
 # warn about C99 declaration after statement
-KBUILD_CFLAGS += $(call cc-option,-Wdeclaration-after-statement,)
+# KBUILD_CFLAGS += $(call cc-option,-Wdeclaration-after-statement,)
 
 # disable pointer signed / unsigned warnings in gcc 4.0
-KBUILD_CFLAGS += $(call cc-option,-Wno-pointer-sign,)
+# KBUILD_CFLAGS += $(call cc-option,-Wno-pointer-sign,)
 
 # disable invalid "can't wrap" optimizations for signed / pointers
-KBUILD_CFLAGS	+= $(call cc-option,-fno-strict-overflow)
+# KBUILD_CFLAGS	+= $(call cc-option,-fno-strict-overflow)
 
 # conserve stack if available
-KBUILD_CFLAGS   += $(call cc-option,-fconserve-stack)
+# KBUILD_CFLAGS   += $(call cc-option,-fconserve-stack)
 
 # 将用户定义的CPPFLAGS，AFLAGS，CFLAGS添加到编译选项中
 # 但是在添加前向用户提示警告信息
@@ -445,10 +455,10 @@ ifneq ($(KAFLAGS),)
         $(call warn-assign,AFLAGS)
         KBUILD_AFLAGS += $(KAFLAGS)
 endif
-ifneq ($(KCFLAGS),)
-        $(call warn-assign,CFLAGS)
-        KBUILD_CFLAGS += $(KCFLAGS)
-endif
+# ifneq ($(KCFLAGS),)
+#         $(call warn-assign,CFLAGS)
+#         KBUILD_CFLAGS += $(KCFLAGS)
+# endif
 
 # Use --build-id when available.
 LDFLAGS_BUILD_ID = $(patsubst -Wl$(comma)%,%,\
@@ -555,7 +565,7 @@ export KBUILD_VMLINUX_OBJS := $(vmlinux-all)
 # May be overridden by arch/$(ARCH)/Makefile
 quiet_cmd_vmlinux__ ?= LD      $@
       cmd_vmlinux__ ?= $(LD) $(LDFLAGS) $(LDFLAGS_vmlinux) -o $@ \
-      -T $(vmlinux-lds) $(vmlinux-init)                          \
+      $(vmlinux-init)                          \
       --start-group $(vmlinux-main) --end-group                  \
       $(filter-out $(vmlinux-lds) $(vmlinux-init) $(vmlinux-main) vmlinux.o FORCE ,$^)
 
