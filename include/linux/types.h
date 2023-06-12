@@ -3,6 +3,9 @@
 
 #ifndef __ASSEMBLY__
 
+#undef offsetof
+#define offsetof(t,m) ((size_t)&((t *)0)->m)
+
 #define asmlinkage __attribute__((regparm(0)))
 
 #define ARRAY_SIZE(x) (sizeof(x) / sizeof((x)[0]))
