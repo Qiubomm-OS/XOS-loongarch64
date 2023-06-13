@@ -80,13 +80,14 @@ git clone https://github.com/huloves/XOS-loongarch64.git
 
 ```bash
 cd XOS-loongarch64
-make all
+bash quick_start.sh defconfig
+bash quick_start.sh image
 ```
 
 生成内核二进制位置：
 
 ```bash
-loongson/XOS-loongarch64/kernel.efi   # loongson 为上述工作目录
+loongson/XOS-loongarch64/arch/loongarch/boot/Image   # loongson 为上述工作目录
 ```
 
 ### 3 获取UEFI启动引导
@@ -104,5 +105,10 @@ git clone https://github.com/yangxiaojuan-loongson/qemu-binary
 进入 loongson/XOS-loongarch64 目录。
 
 ```bash
-make qemu
+bash quick_start.sh run
+```
+
+### 5 清空生成的文件
+```bash
+bash quick_start.sh distclean
 ```
