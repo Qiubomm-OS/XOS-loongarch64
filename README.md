@@ -66,9 +66,7 @@ export LD_LIBRARY_PATH=/opt/cross-tools/loongarch64-unknown-linux-gnu/lib/:$LD_L
 
 这里提供制作好的UEFI启动引导，下载地址：
 
-```bash
-git clone https://github.com/Qiubomm-OS/qemu-binary.git
-```
+[QEMU_EFI.fd](https://github.com/Qiubomm-OS/toolchains/releases/download/v0.1/QEMU_EFI.fd)
 
 ### 3 编译XOS-loongarch64
 
