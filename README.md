@@ -41,32 +41,25 @@ sudo make install
 
 1. 下载
 
-点击下载交叉工具链
+点击下载交叉工具链：
 [loongarch64-clfs-6.3-cross-tools-gcc-full.tar.xz](https://github.com/Qiubomm-OS/toolchains/releases/download/v0.1/loongarch64-clfs-6.3-cross-tools-gcc-full.tar.xz)
+
+将交叉工具链移动到工作目录 loongson 下。
 
 2. 将工具解压到 /opt 目录下
 
 ```bash
-sudo tar -vxf loongarch64-clfs-6.3-cross-tools-gcc-full.tar.xz  -C /opt
+tar -vxf loongarch64-clfs-6.3-cross-tools-gcc-full.tar.xz
 ```
-
-3. 将工具环境配置到当前终端（每次重启电脑后重新配置）
-
-```bash
-export PATH=/opt/cross-tools/bin:$PATH; \
-export LD_LIBRARY_PATH=/opt/cross-tools/lib:$LD_LIBRARY_PATH; \
-export LD_LIBRARY_PATH=/opt/cross-tools/loongarch64-unknown-linux-gnu/lib/:$LD_LIBRARY_PATH
-```
-
-> 工具环境可直接配置进终端配置文件中。如有需要，自行配置。
 
 ### 2 获取UEFI启动引导
 
 回到工作目录 loongson 下。
 
 这里提供制作好的UEFI启动引导，下载地址：
-
 [QEMU_EFI.fd](https://github.com/Qiubomm-OS/toolchains/releases/download/v0.1/QEMU_EFI.fd)
+
+将UEFI启动引导移动到工作目录 loongson 下。
 
 ### 3 编译XOS-loongarch64
 
