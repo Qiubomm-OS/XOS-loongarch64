@@ -24,7 +24,7 @@ function run()
 	qemu-system-loongarch64 -nographic \
 	  -machine virt \
           -m 4G -cpu la464 -smp 1 \
-          -bios ../qemu-binary/QEMU_EFI.fd \
+          -bios ../QEMU_EFI.fd \
 	  -kernel ./arch/loongarch/boot/Image
 }
 
