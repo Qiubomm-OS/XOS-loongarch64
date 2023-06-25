@@ -1,0 +1,20 @@
+# SPDX-License-Identifier: GPL-2.0
+config I386
+        bool
+        default y
+
+config 32BIT
+	def_bool y
+
+config L1_CACHE_SHIFT
+        int
+        default "4"
+
+config PAGE_SIZE_4KB
+	bool
+        default y
+
+source "drivers/Kconfig"
+source "drivers/firmware/Kconfig"
+source "init/Kconfig"
+source "lib/Kconfig"

@@ -3,6 +3,8 @@
 
 #ifndef __ASSEMBLY__
 
+#include <asm-generic/bitsperlong.h>
+
 #undef offsetof
 #define offsetof(t,m) ((size_t)&((t *)0)->m)
 
@@ -11,7 +13,6 @@
 #define ARRAY_SIZE(x) (sizeof(x) / sizeof((x)[0]))
 
 #define NULL ((void*)0)
-#define BITS_PER_LONG 64
 
 #define true 1
 #define false 0

@@ -1,8 +1,6 @@
 /* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
-#ifndef __ASM_LOONGARCH_BITSPERLONG_H
-#define __ASM_LOONGARCH_BITSPERLONG_H
-
-// #define __BITS_PER_LONG (__SIZEOF_LONG__ * 8)
+#ifndef __ASM_I386_BITSPERLONG_H
+#define __ASM_I386_BITSPERLONG_H
 
 #include <asm-generic/bitsperlong.h>
 

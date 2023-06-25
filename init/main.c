@@ -7,6 +7,7 @@
 #include <linux/types.h>
 #include <asm/stdio.h>
 #include <linux/smp.h>
+#include <asm-generic/bitsperlong.h>
 
 extern void __init __no_sanitize_address start_kernel(void);
 
@@ -19,15 +20,16 @@ void __init __no_sanitize_address start_kernel(void)
 
 	serial_ns16550a_init(9600);
 	printk("%s %s-%d.%d.%d\n", "hello", str, 0, 0, 1);
+	printk("@@@@@@: %d\n", BITS_PER_LONG);
 
 	local_irq_disable();
-	early_boot_irqs_disabled = true;
+	// early_boot_irqs_disabled = true;
 
 	/**
 	 * 禁止中断，进行必要的设置后开启
 	 */
 	
-	printk("cpu = %d\n", cpu);
+	// printk("cpu = %d\n", cpu);
 
 	while(1);
 }

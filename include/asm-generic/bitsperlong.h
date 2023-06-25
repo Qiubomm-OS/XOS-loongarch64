@@ -4,7 +4,13 @@
 
 #include <uapi/asm-generic/bitsperlong.h>
 
-#define BITS_PER_LONG 64
+#ifdef CONFIG_32BIT
+#define BITS_PER_LONG	32
+#endif
+
+#ifdef CONFIG_64BIT
+#define BITS_PER_LONG	64
+#endif
 
 /*
  * FIXME: The check currently breaks x86-64 build, so it's
