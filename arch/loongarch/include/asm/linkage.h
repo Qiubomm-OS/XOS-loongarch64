@@ -1,5 +1,5 @@
-#ifndef __ASM_LINKAGE_H
-#define __ASM_LINKAGE_H
+#ifndef _ASM_LINKAGE_H
+#define _ASM_LINKAGE_H
 
 #define __ALIGN		.align 2
 #define __ALIGN_STR	__stringify(__ALIGN)

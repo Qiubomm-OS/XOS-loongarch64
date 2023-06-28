@@ -6,13 +6,21 @@ config I386
 config 32BIT
 	def_bool y
 
+config SMP
+	bool
+	default y
+
 config L1_CACHE_SHIFT
         int
         default "4"
 
 config PAGE_SIZE_4KB
 	bool
-        default y
+	default y
+
+config X86_L1_CACHE_SHIFT
+	int
+	default "4"
 
 source "drivers/Kconfig"
 source "drivers/firmware/Kconfig"
