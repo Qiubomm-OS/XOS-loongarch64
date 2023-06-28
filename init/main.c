@@ -15,14 +15,14 @@ bool early_boot_irqs_disabled;
 
 void __init __no_sanitize_address start_kernel(void)
 {
-	char str[] = "xos-loongarch64";
-	int cpu = smp_processor_id();
+	// char str[] = "xos-loongarch64";
+	// int cpu = smp_processor_id();
 
-	serial_ns16550a_init(9600);
-	printk("%s %s-%d.%d.%d\n", "hello", str, 0, 0, 1);
-	printk("@@@@@@: %d\n", BITS_PER_LONG);
+	// serial_ns16550a_init(9600);
+	// printk("%s %s-%d.%d.%d\n", "hello", str, 0, 0, 1);
+	// printk("@@@@@@: %d\n", BITS_PER_LONG);
 
-	local_irq_disable();
+	// local_irq_disable();
 	// early_boot_irqs_disabled = true;
 
 	/**
