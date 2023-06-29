@@ -1,3 +1,5 @@
+LDFLAGS += -m elf_i386 -nostdlib
+
 KBUILD_DEFCONFIG := i386_defconfig
 
 KBUILD_CFLAGS	+= -nostdinc -I./arch/i386/include -I./include -I./arch/i386/include/uapi -I./include/uapi\
