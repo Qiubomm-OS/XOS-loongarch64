@@ -1,6 +1,8 @@
 #ifndef _ASM_PAGE_H
 #define _ASM_PAGE_H
 
+#include <asm/addrspace.h>
+
 #ifdef CONFIG_PAGE_SIZE_4KB
 #define PAGE_SHIFT	12
 #endif

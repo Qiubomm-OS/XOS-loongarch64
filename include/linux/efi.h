@@ -7,10 +7,11 @@
 #include <linux/screen_info.h>
 #include <linux/string.h>
 #include <linux/atomic-instrumented.h>
-#include <asm/loongarch.h>
 #include <linux/size.h>
 #include <linux/math.h>
 #include <linux/align.h>
+
+#include <asm/page.h>
 
 #define __efiapi
 
