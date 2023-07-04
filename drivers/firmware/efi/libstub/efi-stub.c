@@ -5,6 +5,15 @@
 
 #define EFI_RT_VIRTUAL_BASE	SZ_512M
 
+/*
+ * Some architectures map the EFI regions into the kernel's linear map using a
+ * fixed offset.
+ * 一些架构使用固定的偏移将EFI区域映射到内核的线性映射中。
+ */
+#ifndef EFI_RT_VIRTUAL_OFFSET
+#define EFI_RT_VIRTUAL_OFFSET	0
+#endif
+
 static u64 virtmap_base = EFI_RT_VIRTUAL_BASE;
 static bool flat_va_mapping = (EFI_RT_VIRTUAL_OFFSET != 0);
 
