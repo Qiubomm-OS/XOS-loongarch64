@@ -1,6 +1,8 @@
 #ifndef _ASM_ALTERNATIVE_H
 #define _ASM_ALTERNATIVE_H
 
+#include <linux/stringify.h>
+
 /*
  * Alternative inline assembly for SMP.
  *

@@ -2,6 +2,7 @@
 #define _ASM_GENERIC_IO_H
 
 #include <linux/types.h>
+#include <linux/compiler.h>
 #include <asm/barrier.h>
 #include <uapi/linux/little_endian.h>
 
