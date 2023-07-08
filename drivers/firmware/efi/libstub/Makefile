@@ -1,9 +1,9 @@
-obj-y				+= efi-stub-entry.o
+obj-$(CONFIG_EFI_GENERIC_STUB)	+= efi-stub-entry.o
 obj-y				+= efi-stub-helper.o
-obj-y				+= efi-stub.o
+obj-$(CONFIG_EFI_GENERIC_STUB)	+= efi-stub.o
 obj-$(CONFIG_LOONGARCH)		+= loongarch.o loongarch-stub.o
 obj-y				+= mem.o
 obj-y				+= printk.o
-obj-y				+= screen_info.o
-obj-y				+= systable.o
+obj-$(CONFIG_EFI_GENERIC_STUB)	+= screen_info.o
+obj-$(CONFIG_EFI_GENERIC_STUB)	+= systable.o
 obj-y				+= vsprintf.o

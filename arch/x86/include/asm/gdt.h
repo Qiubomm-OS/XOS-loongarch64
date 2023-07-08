@@ -1,7 +1,8 @@
-#ifndef _I386_GDT_H
-#define _I386_GDT_H
+#ifndef _ASM_x86_GDT_H
+#define _ASM_x86_GDT_H
 
-#include <asm/types.h>
+#include <linux/types.h>
+
 // ----------------  GDT描述符属性  ----------------
 
 #define	DESC_G_4K    1
@@ -118,4 +119,4 @@ struct gdt_desc {
 #define EFLAGS_IOPL_3	(3U << 12)	// IOPL3,用于测试用户程序在非系统调用下进行IO
 #define EFLAGS_IOPL_0	(0U << 12)	// IOPL0
 
-#endif /* _I386_GDT_H */
+#endif /* _ASM_x86_GDT_H */
