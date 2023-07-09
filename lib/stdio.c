@@ -3,7 +3,6 @@
 #include <linux/efi.h>
 #include <linux/types.h>
 #include <linux/kernel.h>
-#include <linux/ns16550a.h>
 
 int printk(const char *fmt, ...)
 {
@@ -33,9 +32,9 @@ int printk(const char *fmt, ...)
 	printed = vsnprintf(printf_buf, sizeof(printf_buf), fmt, args);
 	va_end(args);
 
-	serial_ns16550a_puts(printf_buf);
+	print_str(printf_buf);
 	if (printed >= sizeof(printf_buf)) {
-		serial_ns16550a_puts("[Message truncated]\n");
+		print_str("[Message truncated]\n");
 		return -1;
 	}
 
