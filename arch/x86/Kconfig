@@ -1,4 +1,8 @@
 # SPDX-License-Identifier: GPL-2.0
+config X86
+	bool
+	default y
+
 config I386
         bool
         default y

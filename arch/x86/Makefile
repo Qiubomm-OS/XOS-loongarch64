@@ -17,13 +17,13 @@ OBJCOPYFLAGS	:=-O binary --remove-section=.comment --remove-section=.note --remo
 GZFLAGS		:=-9
 
 LDFLAGS += -m elf_i386 -nostdlib
-KBUILD_AFLAGS	+= -nostdinc -D__ASSEMBLY__ -fno-PIE -m32 -pipe -msoft-float -ffreestanding -Wno-unused-function
+KBUILD_AFLAGS	+= -nostdinc -D__ASSEMBLY__ -fno-PIE -m32 -pipe -msoft-float -ffreestanding
 
 KBUILD_DEFCONFIG := i386_defconfig
 
 KBUILD_CFLAGS	+= -fno-pic
 KBUILD_CFLAGS	+= -nostdinc -I./arch/i386/include -I./include -I./arch/i386/include/uapi -I./include/uapi\
-	-fno-builtin -m32
+	-fno-builtin -m32 -Wno-unused-function
 
 ifeq ($(CONFIG_CPU_BIG_ENDIAN), y)
 AS		+= -EB
