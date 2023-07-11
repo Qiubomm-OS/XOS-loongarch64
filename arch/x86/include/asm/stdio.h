@@ -3,4 +3,6 @@
 
 extern int printk(char const *fmt, ...);
 
+extern void print_str(char *str);
+
 #endif /* ASM_STDIO_H */

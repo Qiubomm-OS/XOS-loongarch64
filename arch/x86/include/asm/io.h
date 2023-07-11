@@ -1,61 +1,88 @@
-#ifndef _ASM_IO_H
-#define _ASM_IO_H
+#ifndef _ASM_X86_IO_H
+#define _ASM_X86_IO_H
 
-#include <asm/page.h>
 #include <linux/types.h>
-#include <linux/ioport.h>
 
-static inline void * phys_to_virt(unsigned long address)
+extern void native_io_delay(void);
+
+static inline void slow_down_io(void)
 {
-    return __va(address);
-}
-static inline unsigned long virt_to_phys(volatile void * address)
-{
-    return __pa(address);
-}
-
-#ifdef SLOW_IO_BY_JUMPING
-#define __SLOW_DOWN_IO "\njmp 1f\n1:\tjmp 1f\n1:"
-#else
-#define __SLOW_DOWN_IO "\noutb %%al,$0x80"
-#endif
-
-#define virt_to_bus virt_to_phys
-#define bus_to_virt phys_to_virt
-
+	native_io_delay();
 #ifdef REALLY_SLOW_IO
-#define __FULL_SLOW_DOWN_IO __SLOW_DOWN_IO __SLOW_DOWN_IO __SLOW_DOWN_IO __SLOW_DOWN_IO
-#else
-#define __FULL_SLOW_DOWN_IO __SLOW_DOWN_IO
+	native_io_delay();
+	native_io_delay();
+	native_io_delay();
 #endif
+}
 
-extern  void outsb(unsigned short port, const void * addr, unsigned long count);
-extern  void outsw(unsigned short port, const void * addr, unsigned long count);
-extern  void outsl(unsigned short port, const void * addr, unsigned long count);
+#define __BUILDIO(bwl, bw, type)				\
+static inline void out##bwl(unsigned type value, int port)	\
+{								\
+	out##bwl##_local(value, port);				\
+}								\
+								\
+static inline unsigned type in##bwl(int port)			\
+{								\
+	return in##bwl##_local(port);				\
+}
 
-extern  void insb(unsigned short port, void * addr, unsigned long count);
-extern  void insw(unsigned short port, void * addr, unsigned long count);
-extern  void insl(unsigned short port, void * addr, unsigned long count);
+#define BUILDIO(bwl, bw, type)						\
+static inline void out##bwl##_local(unsigned type value, int port)	\
+{									\
+	asm volatile("out" #bwl " %" #bw "0, %w1"		\
+		     : : "a"(value), "Nd"(port));			\
+}									\
+									\
+static inline unsigned type in##bwl##_local(int port)			\
+{									\
+	unsigned type value;						\
+	asm volatile("in" #bwl " %w1, %" #bw "0"		\
+		     : "=a"(value) : "Nd"(port));			\
+	return value;							\
+}									\
+									\
+static inline void out##bwl##_local_p(unsigned type value, int port)	\
+{									\
+	out##bwl##_local(value, port);					\
+	slow_down_io();							\
+}									\
+									\
+static inline unsigned type in##bwl##_local_p(int port)			\
+{									\
+	unsigned type value = in##bwl##_local(port);			\
+	slow_down_io();							\
+	return value;							\
+}									\
+									\
+__BUILDIO(bwl, bw, type)						\
+									\
+static inline void out##bwl##_p(unsigned type value, int port)		\
+{									\
+	out##bwl(value, port);						\
+	slow_down_io();							\
+}									\
+									\
+static inline unsigned type in##bwl##_p(int port)			\
+{									\
+	unsigned type value = in##bwl(port);				\
+	slow_down_io();							\
+	return value;							\
+}									\
+									\
+static inline void outs##bwl(int port, const void *addr, unsigned long count) \
+{									\
+	asm volatile("rep; outs" #bwl					\
+		     : "+S"(addr), "+c"(count) : "d"(port));		\
+}									\
+									\
+static inline void ins##bwl(int port, void *addr, unsigned long count)	\
+{									\
+	asm volatile("rep; ins" #bwl					\
+		     : "+D"(addr), "+c"(count) : "d"(port));		\
+}
 
-extern  void outb(unsigned char value, unsigned short port);
-extern  void outw(unsigned short value, unsigned short port);
-extern  void outl(unsigned int value, unsigned short port);
+BUILDIO(b, b, char)
+BUILDIO(w, w, short)
+BUILDIO(l, , int)
 
-extern  void outb_p(unsigned char value, unsigned short port);
-extern  void outw_p(unsigned short value, unsigned short port);
-extern  void outl_p(unsigned int value, unsigned short port);
-
-extern  unsigned char inb(unsigned short port);
-extern  unsigned short inw(unsigned short port);
-extern  unsigned int inl(unsigned short port);
-
-extern  unsigned char inb_p(unsigned short port);
-extern  unsigned short inw_p(unsigned short port);
-extern  unsigned int inl_p(unsigned short port);
-
-#define IO_SPACE_LIMIT 0xffff
-extern int request_resource(struct resource *root, struct resource *new);
-/* PC/ISA/whatever - the normal PC address spaces: IO and memory */
-extern struct resource ioport_resource;
-extern struct resource iomem_resource;
-#endif
+#endif /* _ASM_X86_IO_H */

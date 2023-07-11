@@ -48,6 +48,7 @@ export	TEXT_OFFSET GZFLAGS
 
 # core-y		+= arch/x86/kernel/ arch/x86/mm/
 core-y		+= arch/x86/kernel/
+core-y		+= arch/x86/lib/
 #core-$(CONFIG_NET) += arch/x86/net/
 #core-$(CONFIG_KVM) += arch/x86/kvm/
 #core-$(CONFIG_XEN) += arch/x86/xen/

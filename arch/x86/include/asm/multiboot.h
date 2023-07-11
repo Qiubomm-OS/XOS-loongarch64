@@ -102,6 +102,6 @@ struct mmap_entry_t {
 // 内核未建立分页机制前暂存的指针
 //multiboot_t *mboot_ptr_tmp;
 
-extern void *glb_mboot_ptr __attribute__ ((__section__ (".data.init")));
+extern void *glb_mboot_ptr __attribute__ ((__section__ (".init.data")));
 
 #endif 	// INCLUDE_MULTIBOOT_H_
