@@ -26,6 +26,10 @@ config X86_L1_CACHE_SHIFT
 	int
 	default "4"
 
+config DEFAULT_IO_DELAY_TYPE
+	int
+	default "0"
+
 source "drivers/Kconfig"
 source "drivers/firmware/Kconfig"
 source "init/Kconfig"
