@@ -1,8 +1,10 @@
-#include <asm/stdio.h>
+#include <linux/stdio.h>
 #include <linux/printk.h>
 #include <linux/efi.h>
 #include <linux/types.h>
 #include <linux/kernel.h>
+
+#include <asm/stdio.h>
 
 int printk(const char *fmt, ...)
 {
@@ -20,12 +22,6 @@ int printk(const char *fmt, ...)
 		break;
 	}
 
-	// if (loglevel >= efi_loglevel)
-	// 	return 0;
-
-	// if (loglevel >= 0)
-	// 	efi_puts("EFI stub: ");
-	
 	fmt = printk_skip_level(fmt);
 
 	va_start(args, fmt);

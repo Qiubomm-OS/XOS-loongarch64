@@ -5,7 +5,7 @@
 #include <linux/init.h>
 #include <linux/ns16550a.h>
 #include <linux/types.h>
-#include <asm/stdio.h>
+#include <linux/stdio.h>
 #include <linux/smp.h>
 #include <asm-generic/bitsperlong.h>
 
@@ -19,7 +19,6 @@ void __init __no_sanitize_address start_kernel(void)
 	// int cpu = smp_processor_id();
 
 	// serial_ns16550a_init(9600);
-	print_str("123");
 	printk("%s %s-%d.%d.%d\n", "hello", str, 0, 0, 1);
 	// printk("@@@@@@: %d\n", BITS_PER_LONG);
 
