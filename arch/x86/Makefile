@@ -23,7 +23,7 @@ KBUILD_DEFCONFIG := i386_defconfig
 
 KBUILD_CFLAGS	+= -fno-pic
 KBUILD_CFLAGS	+= -nostdinc -I./arch/i386/include -I./include -I./arch/i386/include/uapi -I./include/uapi\
-	-fno-builtin -m32 -Wno-unused-function
+	-fno-builtin -m32 -Wno-unused-function -Wno-unused-variable
 
 ifeq ($(CONFIG_CPU_BIG_ENDIAN), y)
 AS		+= -EB
