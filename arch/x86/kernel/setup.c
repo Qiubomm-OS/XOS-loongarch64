@@ -4,6 +4,11 @@
 #include <linux/string.h>
 #include <asm/multiboot.h>
 #include <asm/e820.h>
+#include <asm/page.h>
+
+#define PFN_UP(x) 	(((x) + PAGE_SIZE - 1) >> PAGE_SHIFT)
+#define PFN_DOWN(x) ((x) >> PAGE_SHIFT)
+#define PFN_PHYS(x) ((x) << PAGE_SHIFT)
 
 struct e820map biosmap __attribute__ ((__section__ (".init.data")));
 struct e820map e820;
