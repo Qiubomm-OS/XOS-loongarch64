@@ -5,10 +5,19 @@
 #include <asm/multiboot.h>
 #include <asm/e820.h>
 #include <asm/page.h>
+#include <asm/pgtable.h>
 
 #define PFN_UP(x) 	(((x) + PAGE_SIZE - 1) >> PAGE_SHIFT)
-#define PFN_DOWN(x) ((x) >> PAGE_SHIFT)
-#define PFN_PHYS(x) ((x) << PAGE_SHIFT)
+#define PFN_DOWN(x) 	((x) >> PAGE_SHIFT)
+#define PFN_PHYS(x) 	((x) << PAGE_SHIFT)
+
+/*
+ * Reserved space for vmalloc and iomap - defined in asm/page.h
+ */
+#define MAXMEM_PFN	PFN_DOWN(MAXMEM)
+#define MAX_NONPAE_PFN	(1 << 20)
+
+extern char _text, _etext, _edata, _end, _start;
 
 struct e820map biosmap __attribute__ ((__section__ (".init.data")));
 struct e820map e820;
@@ -281,6 +290,78 @@ static void setup_memory_region(void)
 	print_memory_map(who);   // 打印e820内存信息
 }
 
+/*
+ * Find the highest page frame number we have available
+ */
+static void find_max_pfn(void)
+{
+    	int i;
+
+	max_pfn = 0;
+	for (i = 0; i < e820.nr_map; i++) {
+		unsigned long start, end;
+		/* RAM? */
+		if (e820.map[i].type != E820_RAM) {
+			continue;
+		}
+		start = PFN_UP(e820.map[i].addr);
+		end = PFN_DOWN(e820.map[i].addr + e820.map[i].size);
+		if (start >= end) {
+			continue;
+		}
+		if (end > max_pfn) {
+			max_pfn = end;
+		}
+	}
+}
+
+/*
+ * Determine low and high memory ranges:
+ */
+static unsigned long find_max_low_pfn(void)
+{
+	unsigned long max_low_pfn;
+
+	max_low_pfn = max_pfn;
+	if (max_low_pfn > MAXMEM_PFN) {
+		max_low_pfn = MAXMEM_PFN;
+		printk("Warning only %ldMB will be used.\n", MAXMEM >> 20);
+	}
+	return max_low_pfn;
+}
+
+static unsigned long setup_memory(void)
+{
+	printk("setup_memory start.\n");
+	unsigned long bootmap_size, start_pfn;
+	
+	/*
+	 * partially used pages are not usable - thus
+	 * we are rounding upwards:
+	 */
+	start_pfn = PFN_UP(__pa(&_end));   //将物理地址向上取整到下一个页面。__end是已载入内核的底端地址，所以start_pfn是第一块可以被用到的物理页面帧的偏移
+	// printk("start_pfn = 0x%x\n", start_pfn);
+	
+	find_max_pfn();   //遍历e820图，查找最高的可用PFN
+	
+	max_low_pfn = find_max_low_pfn();
+
+#ifdef CONFIG_HIGHMEM
+	highstart_pfn = highend_pfn = max_pfn;
+	if (max_pfn > max_low_pfn) {
+		highstart_pfn = max_low_pfn;
+	}
+	printk(KERN_NOTICE "%ldMB HIGHMEM available.\n",
+		pages_to_mb(highend_pfn - highstart_pfn));
+#endif
+	printk("%ldMB LOWMEM available.\n",
+			pages_to_mb(max_low_pfn));
+	/*
+	 * Initialize the boot-time allocator (with low memory only):
+	 */
+	bootmap_size = init_bootmem(start_pfn, max_low_pfn);
+}
+
 static void show_memory_map(void)
 {
 	uint32_t mmap_addr = ((multiboot_t*)glb_mboot_ptr)->mmap_addr;
@@ -300,7 +381,8 @@ static void show_memory_map(void)
 extern void __init setup_arch(void);
 void __init setup_arch(void)
 {
-	// unsigned long max_low_pfn;
+	unsigned long max_low_pfn;
 	show_memory_map();
 	setup_memory_region();
+	max_low_pfn = setup_memory();
 }
