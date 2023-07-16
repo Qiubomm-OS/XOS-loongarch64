@@ -19,10 +19,11 @@ void __init __no_sanitize_address start_kernel(void)
 	char str[] = "xos";
 	// int cpu = smp_processor_id();
 
-	// serial_ns16550a_init(9600);
+#ifdef CONFIG_LOONGARCH	
+	serial_ns16550a_init(9600);
+#endif
 	printk("%s %s-%d.%d.%d\n", "hello", str, 0, 0, 1);
 	setup_arch();
-	// printk("@@@@@@: %d\n", BITS_PER_LONG);
 
 	// local_irq_disable();
 	// early_boot_irqs_disabled = true;
