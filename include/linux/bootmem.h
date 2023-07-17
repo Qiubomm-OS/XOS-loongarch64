@@ -24,5 +24,6 @@ typedef struct bootmem_data {
 
 unsigned long init_bootmem(unsigned long start, unsigned long pages);
 void free_bootmem(unsigned long addr, unsigned long size);
+void reserve_bootmem(unsigned long addr, unsigned long size);
 
 #endif /* _XKERNEL_BOOTMEM_H */
