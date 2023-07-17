@@ -330,11 +330,62 @@ static unsigned long find_max_low_pfn(void)
 	return max_low_pfn;
 }
 
+/*
+ * Register fully available low RAM pages with the bootmem allocator.
+ * 注册完全可用的低 RAM 页面。
+ */
+static void register_bootmem_low_pages(unsigned long max_low_pfn)
+{
+	int i;
+
+	printk("register_bootmem_low_pages start.\n");
+
+	for(i = 0; i < e820.nr_map; i++) {
+		unsigned long curr_pfn, last_pfn, size;
+		/*
+		 * Reserve usable low memory
+		 */
+		if (e820.map[i].type != E820_RAM) {
+			continue;
+		}
+		/*
+		 * We are rounding up the start address of usable memory:
+		 * 对可用内存的起始地址进行向上取整：
+		 */
+		curr_pfn = PFN_UP(e820.map[i].addr);
+		if(curr_pfn >= max_low_pfn) {
+			continue;
+		}
+		/*
+		 * ... and at the end of the usable range downwards:
+		 * 对可用的结束地址进行向下取整：
+		 */
+		last_pfn = PFN_DOWN(e820.map[i].addr + e820.map[i].size);
+
+		if(last_pfn > max_low_pfn) {
+			last_pfn = max_low_pfn;
+		}
+
+		/*
+		 * .. finally, did all the rounding and playing
+		 * around just make the area go away?
+		 */
+		if(last_pfn <= curr_pfn) {
+			continue;
+		}
+
+		size = last_pfn - curr_pfn;
+		free_bootmem(PFN_PHYS(curr_pfn), PFN_PHYS(size));
+	}
+	printk("register_bootmem_low_pages down.\n");
+}
+
 static unsigned long setup_memory(void)
 {
-	printk("setup_memory start.\n");
 	unsigned long bootmap_size, start_pfn;
-	
+
+	printk("setup_memory start.\n");
+
 	/*
 	 * partially used pages are not usable - thus
 	 * we are rounding upwards:
@@ -360,6 +411,8 @@ static unsigned long setup_memory(void)
 	 * Initialize the boot-time allocator (with low memory only):
 	 */
 	bootmap_size = init_bootmem(start_pfn, max_low_pfn);
+
+	register_bootmem_low_pages(max_low_pfn);
 }
 
 static void show_memory_map(void)

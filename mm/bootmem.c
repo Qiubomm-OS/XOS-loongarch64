@@ -2,12 +2,44 @@
 #include <linux/mmzone.h>
 #include <linux/stdio.h>
 #include <linux/string.h>
+#include <linux/debug.h>
+#include <asm/bitops.h>
 #include <asm/page.h>
 #include <asm/io.h>
 
 unsigned long max_low_pfn;
 unsigned long min_low_pfn;
 unsigned long max_pfn;
+
+static void free_bootmem_core(bootmem_data_t *bdata, unsigned long addr, unsigned long size)
+{
+	unsigned long i;
+	unsigned long start;
+	/*
+	 * round down end of usable mem, partially free pages are
+	 * considered reserved.
+	 * 向下取整可用内存的末端，部分空闲页保留
+	 */
+	unsigned long sidx;
+	unsigned long eidx = (addr + size - bdata->node_boot_start) / PAGE_SIZE;
+	unsigned long end = (addr + size) / PAGE_SIZE;
+
+	if (!size) BUG();
+	if (end > bdata->node_low_pfn) {
+		BUG();
+	}
+
+	/*
+	 * Round up the beginning of the address.
+	 */
+	start = (addr + PAGE_SIZE - 1) / PAGE_SIZE;
+	sidx = start - (bdata->node_boot_start / PAGE_SIZE);
+
+	for (i = sidx; i < eidx; i++) {
+		if (!test_and_clear_bit(i, bdata->node_bootmem_map))
+			BUG();
+	}
+}
 
 /*
  * init_bootmem_core - Called once to set up the allocator itself.
@@ -43,7 +75,12 @@ static unsigned long init_bootmem_core (pg_data_t *pgdat,
 	return mapsize;
 }
 
-unsigned long init_bootmem (unsigned long start, unsigned long pages)
+void free_bootmem(unsigned long addr, unsigned long size)
+{
+	return(free_bootmem_core(contig_page_data.bdata, addr, size));
+}
+
+unsigned long init_bootmem(unsigned long start, unsigned long pages)
 {
 	max_low_pfn = pages;
 	min_low_pfn = start;

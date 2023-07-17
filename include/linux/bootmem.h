@@ -22,6 +22,7 @@ typedef struct bootmem_data {
 	unsigned long last_pos;          // 表示上次分配时使用的页面PFN
 } bootmem_data_t;
 
-unsigned long init_bootmem (unsigned long start, unsigned long pages);
+unsigned long init_bootmem(unsigned long start, unsigned long pages);
+void free_bootmem(unsigned long addr, unsigned long size);
 
 #endif /* _XKERNEL_BOOTMEM_H */
