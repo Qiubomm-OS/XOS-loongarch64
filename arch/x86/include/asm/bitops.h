@@ -1,7 +1,8 @@
 #ifndef _I386_BITOPS_H
 #define _I386_BITOPS_H
 
-#define LOCK_PREFIX ""
+#include <asm/alternative.h>
+
 #define ADDR (*(volatile long *) addr)
 
 static __inline__ void set_bit(int nr, volatile void * addr)

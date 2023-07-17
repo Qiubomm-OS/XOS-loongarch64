@@ -1,6 +1,9 @@
 #ifndef _XKERNEL_BOOTMEM_H
 #define _XKERNEL_BOOTMEM_H
 
+#include <asm/cache.h>
+#include <asm/dma.h>
+
 /**
  * simple boot-time physical memory area allocator.
  * 简单的启动时物理内存区域分配器。
@@ -25,5 +28,15 @@ typedef struct bootmem_data {
 unsigned long init_bootmem(unsigned long start, unsigned long pages);
 void free_bootmem(unsigned long addr, unsigned long size);
 void reserve_bootmem(unsigned long addr, unsigned long size);
+void *__alloc_bootmem(unsigned long size, unsigned long align, unsigned long goal);
+
+#define alloc_bootmem(x) \
+	__alloc_bootmem((x), SMP_CACHE_BYTES, __pa(MAX_DMA_ADDRESS))
+#define alloc_bootmem_low(x) \
+	__alloc_bootmem((x), SMP_CACHE_BYTES, 0)
+#define alloc_bootmem_pages(x) \
+	__alloc_bootmem((x), PAGE_SIZE, __pa(MAX_DMA_ADDRESS))
+#define alloc_bootmem_low_pages(x) \
+	__alloc_bootmem((x), PAGE_SIZE, 0)
 
 #endif /* _XKERNEL_BOOTMEM_H */
