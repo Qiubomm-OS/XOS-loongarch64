@@ -3,8 +3,10 @@
 
 #include <linux/list.h>
 #include <linux/types.h>
-// #include <linux/spinlock.h>
-// #include <linux/mm.h>
+#include <linux/spinlock.h>
+#include <linux/mm.h>
+#include <linux/bootmem.h>
+#include <linux/mmzone.h>
 
 /*
  * Free memory management - zoned buddy allocator.
@@ -35,7 +37,7 @@ typedef struct zone_struct {
 	/*
 	 * Commonly accessed fields:
 	 */
-	// spinlock_t				lock;   	  // 并行访问时保护该管理区的自旋锁
+	spinlock_t				lock;   	  // 并行访问时保护该管理区的自旋锁
 	unsigned long				free_pages;   // 该管理区中空闲页面的总数
 	unsigned long				pages_min, pages_low, pages_high;   // 管理区极值
 	int					need_balance;   // 当可用页面的数量到达管理区极值的某一个值时，就需要平衡该管理区
@@ -66,8 +68,8 @@ typedef struct zone_struct {
 
 #define ZONE_DMA		0
 #define ZONE_NORMAL		1
-#define ZONE_HIGHMEM	2
-#define MAX_NR_ZONES	3
+#define ZONE_HIGHMEM		2
+#define MAX_NR_ZONES		3
 
 /*
  * One allocation request operates on a zonelist. A zonelist
@@ -99,16 +101,49 @@ typedef struct zonelist_struct {
  */
 struct bootmem_data;
 typedef struct pglist_data {
-	zone_t node_zones[MAX_NR_ZONES];
+	/**
+	 * 分配请求在该表中申请，对于UNM架构没有fallback
+	 */
 	zonelist_t node_zonelists[GFP_ZONEMASK+1];
-	int nr_zones;   // 表示该节点中管理区数目，1~3
-	struct page *node_mem_map;   // 指 struct page 中第一个页面
+	/**
+	 * 节点中的管理区
+	 */
+	zone_t node_zones[MAX_NR_ZONES];
+	/**
+	 * 节点中管理区数目
+	 */
+	int nr_zones;
+	/**
+	 * 指向该节点表示的内存在struct page数组中的第一个页面
+	 */
+	struct page *node_mem_map;
+	/**
+	 * 描述节点中内存空洞的位图
+	 */
 	unsigned long *valid_addr_bitmap;
+	/**
+	 * 指向启动时内存管理器
+	 */
 	struct bootmem_data *bdata;
-	unsigned long node_start_paddr;   // 节点的起始物理地址
+	/**
+	 * 节点的起始物理地址
+	 */
+	unsigned long node_start_paddr;
+	/**
+	 * 节点在全局 mem_map 中的页面偏移
+	 */
 	unsigned long node_start_mapnr;   // 该节点在全局 mem_map 中的页面偏移
+	/**
+	 * 节点中的页面总数
+	 */
 	unsigned long node_size;
-	int node_id;   // 节点ID
+	/**
+	 * 节点ID号
+	 */
+	int node_id;
+	/**
+	 * 指向下一个节点，该链表以NULL结束
+	 */
 	struct pglist_data *node_next;
 } pg_data_t;
 

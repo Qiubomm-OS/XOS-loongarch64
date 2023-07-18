@@ -3,6 +3,7 @@
 #include <linux/debug.h>
 #include <asm/page.h>
 #include <asm/pgtable.h>
+#include <asm/processor.h>
 
 unsigned long highstart_pfn, highend_pfn;
 static unsigned long totalram_pages;
