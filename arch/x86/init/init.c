@@ -1,3 +1,4 @@
+#include <linux/mmzone.h>
 #include <linux/bootmem.h>
 #include <linux/stdio.h>
 #include <linux/debug.h>
@@ -13,7 +14,6 @@ pgd_t swapper_pg_dir[1024] __attribute__((__aligned__(PAGE_SIZE)));
 
 static void pagetable_init(void)
 {
-	// printk("swapper_pg_dir = %x\n", swapper_pg_dir);
 	unsigned long vaddr, end;
 	pgd_t *pgd, *pgd_base;
 	int i, j, k;
@@ -21,6 +21,8 @@ static void pagetable_init(void)
 	pte_t *pte, *pte_base;
 
 	printk("pagetable_init start.\n");
+
+	// printk("swapper_pg_dir = %x\n", swapper_pg_dir);
 
 	/*
 	 * This can be zero as well - no problem, in that case we exit
@@ -63,4 +65,23 @@ static void pagetable_init(void)
 	}
 
 	printk("pagetable_init down.\n");
+}
+
+static void zone_sizes_init(void)
+{
+	unsigned long zones_size[MAX_NR_ZONES] = {0, 0, 0};
+	unsigned int max_dma, high, low;
+
+	/**
+	 * 低于 16MB 的内存只能用于 DMA，因此，这条语句用于存放16MB的页面, MAX_DMA_ADDRESS = 0xC1000000, max_dma = 0x1000
+	 */
+	max_dma = virt_to_phys((char*)MAX_DMA_ADDRESS) >> PAGE_SHIFT;
+	low = max_low_pfn;
+
+	if(low < max_dma) {
+		zones_size[ZONE_DMA] = low;
+	} else {
+		zones_size[ZONE_DMA] = max_dma;
+		zones_size[ZONE_NORMAL] = low - max_dma;
+	}
 }
