@@ -1,6 +1,7 @@
 #ifndef _XKERNEL_BOOTMEM_H
 #define _XKERNEL_BOOTMEM_H
 
+#include <linux/mmzone.h>
 #include <asm/cache.h>
 #include <asm/dma.h>
 
@@ -29,6 +30,7 @@ unsigned long init_bootmem(unsigned long start, unsigned long pages);
 void free_bootmem(unsigned long addr, unsigned long size);
 void reserve_bootmem(unsigned long addr, unsigned long size);
 void *__alloc_bootmem(unsigned long size, unsigned long align, unsigned long goal);
+void * __alloc_bootmem_node(pg_data_t *pgdat, unsigned long size, unsigned long align, unsigned long goal);
 
 #define alloc_bootmem(x) \
 	__alloc_bootmem((x), SMP_CACHE_BYTES, __pa(MAX_DMA_ADDRESS))
@@ -38,5 +40,12 @@ void *__alloc_bootmem(unsigned long size, unsigned long align, unsigned long goa
 	__alloc_bootmem((x), PAGE_SIZE, __pa(MAX_DMA_ADDRESS))
 #define alloc_bootmem_low_pages(x) \
 	__alloc_bootmem((x), PAGE_SIZE, 0)
+
+#define alloc_bootmem_node(pgdat, x) \
+	__alloc_bootmem_node((pgdat), (x), SMP_CACHE_BYTES, __pa(MAX_DMA_ADDRESS))
+#define alloc_bootmem_pages_node(pgdat, x) \
+	__alloc_bootmem_node((pgdat), (x), PAGE_SIZE, __pa(MAX_DMA_ADDRESS))
+#define alloc_bootmem_low_pages_node(pgdat, x) \
+	__alloc_bootmem_node((pgdat), (x), PAGE_SIZE, 0)
 
 #endif /* _XKERNEL_BOOTMEM_H */

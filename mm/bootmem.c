@@ -254,3 +254,16 @@ void * __alloc_bootmem(unsigned long size, unsigned long align, unsigned long go
 	BUG();
 	return NULL;
 }
+
+void * __alloc_bootmem_node(pg_data_t *pgdat, unsigned long size, unsigned long align, unsigned long goal)
+{
+	void *ptr;
+
+	ptr = __alloc_bootmem_core(pgdat->bdata, size, align, goal);
+	if (ptr)
+		return (ptr);
+
+	printk("bootmem alloc of %lu bytes failed!\n", size);
+	BUG();
+	return NULL;
+}

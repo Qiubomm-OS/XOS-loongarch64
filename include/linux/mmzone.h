@@ -4,9 +4,6 @@
 #include <linux/list.h>
 #include <linux/types.h>
 #include <linux/spinlock.h>
-#include <linux/mm.h>
-#include <linux/bootmem.h>
-#include <linux/mmzone.h>
 
 /*
  * Free memory management - zoned buddy allocator.

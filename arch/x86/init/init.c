@@ -1,4 +1,3 @@
-#include <linux/mmzone.h>
 #include <linux/bootmem.h>
 #include <linux/stdio.h>
 #include <linux/debug.h>

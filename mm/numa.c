@@ -1,4 +1,3 @@
-#include <linux/mmzone.h>
 #include <linux/bootmem.h>
 
 int numnodes = 1;   /* Initialized for UMA platforms */
