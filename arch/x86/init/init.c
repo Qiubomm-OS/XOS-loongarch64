@@ -1,6 +1,7 @@
 #include <linux/bootmem.h>
 #include <linux/stdio.h>
 #include <linux/debug.h>
+#include <linux/mm.h>
 #include <asm/page.h>
 #include <asm/pgtable.h>
 #include <asm/processor.h>
@@ -83,4 +84,30 @@ static void zone_sizes_init(void)
 		zones_size[ZONE_DMA] = max_dma;
 		zones_size[ZONE_NORMAL] = low - max_dma;
 	}
+	/**
+	 * 初始化内存管理区，物理页面分配器（二进制伙伴分配器）
+	 */
+	free_area_init(zones_size);
+	printk("zone_sizes_init down.\n");
+}
+
+/*
+ * paging_init() sets up the page tables - note that the first 8MB are
+ * already mapped by head.S.
+ *
+ * This routines also unmaps the page at virtual kernel address 0, so
+ * that we can trap those pesky NULL-reference errors in the kernel.
+ */
+void paging_init(void)
+{
+	printk("paging_init start.\n");
+	pagetable_init();
+	printk("@@@@@: 123\n");
+	load_cr3(swapper_pg_dir);
+	printk("load_cr3 complete.\n");
+	__flush_tlb_all();
+	printk("paging_init down.\n");
+	zone_sizes_init();
+	printk("paging_init down.\n");
+	while (1);
 }

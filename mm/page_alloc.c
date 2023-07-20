@@ -120,39 +120,60 @@ static void free_area_init_core(int nid, pg_data_t *pgdat, struct page **gmap,
 	 * PAGE_OFFSET, we need to align the actual array onto a mem map 
 	 * boundary, so that MAP_NR works.
 	 */
-	map_size = (totalpages + 1)*sizeof(struct page);   // 计算数组所需的内存量。页面总数 * struct page 大小
+	map_size = (totalpages + 1) * sizeof(struct page);   // 计算数组所需的内存量。页面总数 * struct page 大小
 	if (lmem_map == (struct page *)0) {   // 若映射图还没有分配，在这里分配
 		printk("pgdat = %x\n", pgdat);
 		// while(1);
 		// lmem_map = (struct page *) alloc_bootmem_node(pgdat, map_size);
 		lmem_map = (struct page *) alloc_bootmem_node(pgdat, map_size);
-		lmem_map = (struct page *)(PAGE_OFFSET + 
-			MAP_ALIGN((unsigned long)lmem_map - PAGE_OFFSET));
+		lmem_map = (struct page *)(PAGE_OFFSET + MAP_ALIGN((unsigned long)lmem_map - PAGE_OFFSET));
 	}
 
-	*gmap = pgdat->node_mem_map = lmem_map;   // mem_map赋值
-	pgdat->node_size = totalpages;   // 记录节点大小
-	pgdat->node_start_paddr = zone_start_paddr;   // 记录起始物理地址
-	pgdat->node_start_mapnr = (lmem_map - mem_map);   // 记录节点所占 mem_map 中的偏移
-	pgdat->nr_zones = 0;   // 初始化管理区计数为 0，将在函数的后面设置
+	/**
+	 * 全局mem_map赋值
+	 */
+	*gmap = pgdat->node_mem_map = lmem_map;
+	/**
+	 * 记录节点中含有多少页面（包含空洞，在UMA架构中通常不含有空洞）
+	 */
+	pgdat->node_size = totalpages;
+	/**
+	 * 记录节点起始物理地址
+	 */
+	pgdat->node_start_paddr = zone_start_paddr;
+	/**
+	 * 记录节点所占 mem_map 中的偏移
+	 */
+	pgdat->node_start_mapnr = (lmem_map - mem_map);
+	/**
+	 * 初始化管理区计数为 0，将在函数的后面设置，设置完一个管理区加1
+	 */
+	pgdat->nr_zones = 0;
 
 	offset = lmem_map - mem_map;   // offset 是 lmem_map 开始的局部部分相对 mem_map 的偏移
 	printk("lmem_map = %p\n", lmem_map);
 	printk("mem_map  = %p\n", mem_map);
 	printk("offset = %d\n", offset);
-	for (j = 0; j < MAX_NR_ZONES; j++) {   // 循环处理节点中的每个 zone_t
+
+	/**
+	 * 循环处理节点中的每个管理区
+	 */
+	for (j = 0; j < MAX_NR_ZONES; j++) {
 		zone_t *zone = pgdat->node_zones + j;
 		unsigned long mask;
 		unsigned long size, realsize;
 
 		zone_table[nid * MAX_NR_ZONES + j] = zone;   // 在 zone_table 中记录指向该管理区的指针
-		realsize = size = zones_size[j];   // 计算管理区的实际大小
+		realsize = size = zones_size[j];   // 计算管理区的大小
 		if (zholes_size)
 			realsize -= zholes_size[j];
 
 		printk("zone(%lu): %lu pages.\n", j, size);   // 打印提示信息告知在这个管理区中的页面数
 
-		zone->size = size;   // 初始化管理区的其他字段
+		/**
+		 * 初始化管理区的其他字段
+		 */
+		zone->size = size;
 		zone->name = zone_names[j];
 		zone->lock = SPIN_LOCK_UNLOCKED;
 		zone->zone_pgdat = pgdat;
@@ -175,10 +196,15 @@ static void free_area_init_core(int nid, pg_data_t *pgdat, struct page **gmap,
 		// for(i = 0; i < zone->wait_table_size; ++i)
 		// 	init_waitqueue_head(zone->wait_table + i);
 
-		pgdat->nr_zones = j+1;   // 激活一个新的管理区，更新节点中的管理区数量
+		/**
+		 * 激活一个新的管理区，更新节点中的管理区数量
+		 */
+		pgdat->nr_zones = j+1;
 
-		// 计算管理区极值并记录管理区地址
-		mask = (realsize / zone_balance_ratio[j]);   // 计算掩码
+		/**
+		 * 计算管理区极值
+		 */
+		mask = (realsize / zone_balance_ratio[j]);
 		if (mask < zone_balance_min[j])
 			mask = zone_balance_min[j];
 		else if (mask > zone_balance_max[j])
@@ -187,11 +213,14 @@ static void free_area_init_core(int nid, pg_data_t *pgdat, struct page **gmap,
 		zone->pages_low = mask * 2;
 		zone->pages_high = mask * 3;
 
-		zone->zone_mem_map = mem_map + offset;   // 记录管理区的第 1 个 struct page 在 mem_map 中的地址
-		zone->zone_start_mapnr = offset;   // 记录 mem_map 中当前管理区起点的索引
-		zone->zone_start_paddr = zone_start_paddr;   // 记录管理区的起始物理地址
+		/**
+		 * 记录管理区的第1个page结构体在mem_map中的地址
+		 */
+		zone->zone_mem_map = mem_map + offset;
+		zone->zone_start_mapnr = offset;   // 记录mem_map中当前管理区起点的索引
+		zone->zone_start_paddr = zone_start_paddr;   // 记录当前管理区的起始物理地址
 
-		if ((zone_start_paddr >> PAGE_SHIFT) & (zone_required_alignment-1)) {   // 利用伙伴分配器保证管理区已经正确的排列可用（？）
+		if ((zone_start_paddr >> PAGE_SHIFT) & (zone_required_alignment - 1)) {   // 利用伙伴分配器保证管理区已经正确的排列可用（？）
 			printk("BUG: wrong zone alignment, it will crash\n");
 			BUG();
 		}
@@ -201,8 +230,10 @@ static void free_area_init_core(int nid, pg_data_t *pgdat, struct page **gmap,
 		 * up by free_all_bootmem() once the early boot process is
 		 * done. Non-atomic initialization, single-pass.
 		 */
-		// 初识时，管理区中所有的页面都标记为保留，因为没有办法知道引导内存分配器使用的是哪些页面。
-		// 当引导内存分配器在 free_all_bootmem() 中收回时，未使用页面中的 PG_reserved 会被清除。
+		/**
+		 * 初始时，管理区中所有的页面都标记为保留，因为没有办法知道引导内存分配器使用的是哪些页面。
+		 * 当引导内存分配器在 free_all_bootmem() 中收回时，未使用页面中的 PG_reserved 会被清除。
+		 */
 		for (i = 0; i < size; i++) {
 			struct page *page = mem_map + offset + i;   // 获得页面偏移
 			set_page_zone(page, nid * MAX_NR_ZONES + j);   // 页面所在的管理区由页面标志编码
@@ -214,13 +245,15 @@ static void free_area_init_core(int nid, pg_data_t *pgdat, struct page **gmap,
 			zone_start_paddr += PAGE_SIZE;   // 将 zone_start_paddr 增加一个页面大小，将用于记录下一个管理区的起点
 		}
 
-		// 初始化管理区的空闲链表，分配伙伴分配器在记录页面伙伴状态时的位图
+		/**
+		 * 初始化管理区的空闲链表，二进制伙伴分配器
+		 */
 		offset += size;
 		for (i = 0; ; i++) {
 			unsigned long bitmap_size;
 
 			INIT_LIST_HEAD(&zone->free_area[i].free_list);
-			if (i == MAX_ORDER-1) {
+			if (i == MAX_ORDER - 1) {
 				zone->free_area[i].map = NULL;
 				break;
 			}
@@ -248,12 +281,18 @@ static void free_area_init_core(int nid, pg_data_t *pgdat, struct page **gmap,
 			 * Finally, we LONG_ALIGN because all bitmap
 			 * operations are on longs.
 			 */
-			bitmap_size = (size-1) >> (i+4);
-			bitmap_size = LONG_ALIGN(bitmap_size+1);
-			zone->free_area[i].map = 
-			  (unsigned long *) alloc_bootmem_node(pgdat, bitmap_size);
+			/**
+			 * size是当前管理区的页面数量
+			 */
+			bitmap_size = (size - 1) >> (i + 4);
+			bitmap_size = LONG_ALIGN(bitmap_size + 1);
+			/**
+			 * 分配伙伴分配器在记录页面伙伴状态时的位图
+			 */
+			zone->free_area[i].map = (unsigned long *)alloc_bootmem_node(pgdat, bitmap_size);
 		}
 	}
+	build_zonelists(pgdat);
 }
 
 void free_area_init(unsigned long *zones_size)

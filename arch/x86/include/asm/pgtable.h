@@ -4,6 +4,7 @@
 #include <asm/page.h>
 #include <asm/pgtable-2level.h>
 #include <asm/cpufeature.h>
+#include <asm/processor.h>
 
 #define pages_to_mb(x) ((x) >> (20-PAGE_SHIFT))
 

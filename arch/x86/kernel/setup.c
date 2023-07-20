@@ -6,6 +6,16 @@
 #include <asm/e820.h>
 #include <asm/page.h>
 #include <asm/pgtable.h>
+#include <asm/processor.h>
+
+/*
+ * Machine setup..
+ */
+
+char ignore_irq13;
+struct cpuinfo_x86 boot_cpu_data = { 0, 0, 0, 0, -1, 1, 0, 0, -1 };
+
+unsigned long mmu_cr4_features;   // extern in include/asm/processor.h
 
 #define PFN_UP(x) 	(((x) + PAGE_SIZE - 1) >> PAGE_SHIFT)
 #define PFN_DOWN(x) 	((x) >> PAGE_SHIFT)
@@ -461,4 +471,5 @@ void __init setup_arch(void)
 	show_memory_map();
 	setup_memory_region();
 	max_low_pfn = setup_memory();
+	paging_init();
 }
