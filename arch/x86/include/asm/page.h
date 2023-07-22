@@ -7,6 +7,8 @@
 #include <asm/page_32.h>
 #endif	/* CONFIG_X86_64 */
 
+#ifndef __ASSEMBLY__
+
 #define clear_page(page) memset((void*)(page), 0, PAGE_SIZE)
 #define copy_page(to, from) memcpy((void*)(to), (void*)(from), PAGE_SIZE)
 
@@ -56,5 +58,7 @@ typedef struct { unsigned long pgprot; } pgprot_t;
 #define __pgprot(x)	((pgprot_t) { (x) } )
 #define VALID_PAGE(page)	((page - mem_map) < max_mapnr)
 #define virt_to_page(kaddr)	(mem_map + (__pa(kaddr) >> PAGE_SHIFT))
+
+#endif /* !__ASSEMBLY__ */
 
 #endif /* _ASM_PAGE_H */
