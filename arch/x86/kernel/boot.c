@@ -159,8 +159,7 @@ static void __init gdt_create(void)
 	asm volatile ("mov %0, %%ax;mov %%ax, %%ss" : : "i" (SELECTOR_K_DATA));
 }
 
-extern void kern_entry(void);
-void __init kern_entry()
+void __init kern_entry(void)
 {
 	uint32_t kern_stack_top;
 

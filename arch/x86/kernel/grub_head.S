@@ -47,14 +47,12 @@ MBOOT_CHECKSUM 		= 	- (MBOOT_HEADER_MAGIC + MBOOT_HEADER_FLAGS)
 start:
 	cli  				//此时还没有设置好保护模式的中断处理，所以必须关闭中断
 	movl %ebx, (glb_mboot_ptr)	//将 ebx 中存储的指针存入 glb_mboot_ptr 变量
-	movl $0xC0000000, %eax
-	movl (stack_start), %esp 
-	subl %eax, %esp
-    movl $0, %ebp 			//帧指针修改为 0
+//	movl $0xC0000000, %eax
+//	movl (stack_start), %esp 
+//	subl %eax, %esp
+	movl $0, %ebp 			//帧指针修改为 0
 	movl $0xB8000, %eax
 	movl $0x07560756, (%eax)
-loop_:
-	jmp loop_
 	call kern_entry
 stop:
 	hlt 			 //停机指令，什么也不做，可以降低 CPU 功耗
