@@ -33,7 +33,7 @@ MBOOT_CHECKSUM 		= 	- (MBOOT_HEADER_MAGIC + MBOOT_HEADER_FLAGS)
 */
 #include <linux/linkage.h>
 .code32  	//所有代码以 32-bit 的方式编译
-.section .init.text  	//代码段从这里开始
+.section .head.text  	//代码段从这里开始
 
 // 在代码段的起始位置设置符合 Multiboot 规范的标记
 
@@ -53,6 +53,8 @@ start:
     movl $0, %ebp 			//帧指针修改为 0
 	movl $0xB8000, %eax
 	movl $0x07560756, (%eax)
+loop_:
+	jmp loop_
 	call kern_entry
 stop:
 	hlt 			 //停机指令，什么也不做，可以降低 CPU 功耗
