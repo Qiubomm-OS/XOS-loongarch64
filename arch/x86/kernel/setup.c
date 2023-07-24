@@ -401,8 +401,9 @@ static unsigned long setup_memory(void)
 	 * we are rounding upwards:
 	 */
 	start_pfn = PFN_UP(__pa(&_end));   //将物理地址向上取整到下一个页面。__end是已载入内核的底端地址，所以start_pfn是第一块可以被用到的物理页面帧的偏移
-	// printk("start_pfn = 0x%x\n", start_pfn);
-	
+	printk("_end = %lx, start_pfn = 0x%x\n", &_end, start_pfn);
+	while (1);
+
 	find_max_pfn();   //遍历e820图，查找最高的可用PFN
 	
 	max_low_pfn = find_max_low_pfn();
@@ -453,6 +454,7 @@ static void show_memory_map(void)
 	uint32_t mmap_addr = ((multiboot_t*)glb_mboot_ptr)->mmap_addr;
 	uint32_t mmap_length = ((multiboot_t*)glb_mboot_ptr)->mmap_length;
 	mmap_entry_t *mmap = (mmap_entry_t *)mmap_addr;
+	uint32_t total = 0;
 
 	printk("Memory map:\n");
 
@@ -461,13 +463,27 @@ static void show_memory_map(void)
 		(uint32_t)mmap->base_addr_high, (uint32_t)mmap->base_addr_low,
 		(uint32_t)mmap->length_high, (uint32_t)mmap->length_low,
 		(uint32_t)mmap->type);
+		if (mmap->type == 0x01) {
+			total += mmap->length_low;
+		}
 	}
+
+	printk("total = %d\n", total >> 20);
+}
+
+static void __init __memcpy(void* dst_, const void* src_, uint32_t size)
+{
+	uint8_t* dst = dst_;
+	const uint8_t* src = src_;
+	while (size-- > 0)
+	*dst++ = *src++;
 }
 
 extern void __init setup_arch(void);
 void __init setup_arch(void)
 {
 	unsigned long max_low_pfn;
+	__memcpy((void *)0, (void *)0xc0000000, (uint32_t)&_end);
 	show_memory_map();
 	setup_memory_region();
 	max_low_pfn = setup_memory();
