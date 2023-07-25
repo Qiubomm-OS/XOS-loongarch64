@@ -2,6 +2,12 @@
 #include <linux/sizes.h>
 #include <asm/asm-offsets.h>
 #include <asm/thread_info.h>
+#include <asm/page.h>
+#include <asm/cache.h>
+
+#ifdef CONFIG_I386
+#define LOAD_OFFSET 0xC0000000
+#endif
 
 /*
 #define PAGE_SIZE 16384
@@ -16,6 +22,8 @@
 
 #include <asm-generic/vmlinux.lds.h>
 #include "image-vars.h"
+
+#define BSS_DECRYPTED
 
 /*
  * Max avaliable Page Size is 64K, so we set SectionAlignment
@@ -45,102 +53,115 @@ SECTIONS
 		. = ALIGN(4096);
 	}
 
-	_stext = .;
-	.text : {
+	. = LOAD_OFFSET;
+
+	/* Text and read-only data */
+	.text :  AT(ADDR(.text) - LOAD_OFFSET) {
+		_text = .;
+		_stext = .;
+		/* bootstrapping code */
+		HEAD_TEXT
 		TEXT_TEXT
 		SCHED_TEXT
 		CPUIDLE_TEXT
 		LOCK_TEXT
 		KPROBES_TEXT
-		IRQENTRY_TEXT
 		SOFTIRQENTRY_TEXT
-		*(.fixup)
+		STATIC_CALL_TEXT
+		ALIGN_ENTRY_TEXT_BEGIN
+		ENTRY_TEXT
+		ALIGN_ENTRY_TEXT_END
 		*(.gnu.warning)
-	} :text = 0
-	. = ALIGN(PECOFF_SEGMENT_ALIGN);
+
+	} :text =0xcccc
+
+	/* End of text section, which should occupy whole number of pages */
 	_etext = .;
+	. = ALIGN(PAGE_SIZE);
 
-	/*
-	 * struct alt_inst entries. From the header (alternative.h):
-	 * "Alternative instructions for different CPU types or capabilities"
-	 * Think locking instructions on spinlocks.
-	 */
-	. = ALIGN(4);
-	.altinstructions : AT(ADDR(.altinstructions) - LOAD_OFFSET) {
-		__alt_instructions = .;
-		*(.altinstructions)
-		__alt_instructions_end = .;
+	/* Data */
+	.data : AT(ADDR(.data) - LOAD_OFFSET) {
+		/* Start of data section */
+		_sdata = .;
+
+		/* init_task */
+		INIT_TASK_DATA(THREAD_SIZE)
+
+		PAGE_ALIGNED_DATA(PAGE_SIZE)
+
+		CACHELINE_ALIGNED_DATA(L1_CACHE_BYTES)
+
+		DATA_DATA
+		CONSTRUCTORS
+
+		/* rarely changed data like cpu maps */
+		READ_MOSTLY_DATA(INTERNODE_CACHE_BYTES)
+
+		/* End of data section */
+		_edata = .;
+	} :data
+
+	BUG_TABLE
+
+	ORC_UNWIND_TABLE
+
+	/* Init code and data - will be freed after init */
+	. = ALIGN(PAGE_SIZE);
+	.init.begin : AT(ADDR(.init.begin) - LOAD_OFFSET) {
+		__init_begin = .; /* paired with __init_end */
 	}
-
-	.got : ALIGN(16) { *(.got) }
-	.plt : ALIGN(16) { *(.plt) }
-	.got.plt : ALIGN(16) { *(.got.plt) }
-
-	. = ALIGN(PECOFF_SEGMENT_ALIGN);
-	__init_begin = .;
-	__inittext_begin = .;
 
 	INIT_TEXT_SECTION(PAGE_SIZE)
-	.exit.text : {
-		EXIT_TEXT
-	}
-
-	. = ALIGN(PECOFF_SEGMENT_ALIGN);
-	__inittext_end = .;
-
-	__initdata_begin = .;
 
 	INIT_DATA_SECTION(16)
-	.exit.data : {
-		EXIT_DATA
+
+	. = ALIGN(PAGE_SIZE);
+
+	/* freed after init ends here */
+	.init.end : AT(ADDR(.init.end) - LOAD_OFFSET) {
+		__init_end = .;
 	}
 
-#ifdef CONFIG_SMP
-	PERCPU_SECTION(1 << CONFIG_L1_CACHE_SHIFT)
-#endif
-
-	.rela.dyn : ALIGN(8) { *(.rela.dyn) *(.rela*) }
-
-	.init.bss : {
-		*(.init.bss)
+	/*
+	 * smp_locks might be freed after init
+	 * start/end must be page aligned
+	 */
+	. = ALIGN(PAGE_SIZE);
+	.smp_locks : AT(ADDR(.smp_locks) - LOAD_OFFSET) {
+		__smp_locks = .;
+		*(.smp_locks)
+		. = ALIGN(PAGE_SIZE);
+		__smp_locks_end = .;
 	}
-	. = ALIGN(PECOFF_SEGMENT_ALIGN);
-	__initdata_end = .;
 
-	__init_end = .;
-
-	_sdata = .;
-	RO_DATA(4096)
-	RW_DATA(1 << CONFIG_L1_CACHE_SHIFT, PAGE_SIZE, THREAD_SIZE)
-
-	.sdata : {
-		*(.sdata)
+	/* BSS */
+	. = ALIGN(PAGE_SIZE);
+	.bss : AT(ADDR(.bss) - LOAD_OFFSET) {
+		__bss_start = .;
+		*(.bss..page_aligned)
+		. = ALIGN(PAGE_SIZE);
+		*(BSS_MAIN)
+		BSS_DECRYPTED
+		. = ALIGN(PAGE_SIZE);
+		__bss_stop = .;
 	}
-	/* .edata_padding : { BYTE(0); . = ALIGN(PECOFF_FILE_ALIGN); } */
-	_edata =  .;
 
-	BSS_SECTION(0, SZ_64K, 8)
-	. = ALIGN(PECOFF_SEGMENT_ALIGN);
+	/*
+	 * The memory occupied from _text to here, __end_of_kernel_reserve, is
+	 * automatically reserved in setup_arch(). Anything after here must be
+	 * explicitly reserved using memblock_reserve() or it will be discarded
+	 * and treated as available memory.
+	 */
+	__end_of_kernel_reserve = .;
 
+	. = ALIGN(PAGE_SIZE);
+	.brk : AT(ADDR(.brk) - LOAD_OFFSET) {
+		__brk_base = .;
+		. += 64 * 1024;		/* 64k alignment slop space */
+		*(.bss..brk)		/* areas brk users have reserved */
+		__brk_limit = .;
+	}
+
+	. = ALIGN(PAGE_SIZE);		/* keep VO_INIT_SIZE page aligned */
 	_end = .;
-
-	STABS_DEBUG
-	DWARF_DEBUG
-	ELF_DETAILS
-
-	.gptab.sdata : {
-		*(.gptab.data)
-		*(.gptab.sdata)
-	}
-	.gptab.sbss : {
-		*(.gptab.bss)
-		*(.gptab.sbss)
-	}
-
-	DISCARDS
-	/DISCARD/ : {
-		*(.gnu.attributes)
-		*(.options)
-		*(.eh_frame)
-	}
 }
