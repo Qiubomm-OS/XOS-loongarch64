@@ -22,6 +22,13 @@ config PAGE_SIZE_4KB
 	bool
 	default y
 
+#
+# Define implied options from the CPU selection here
+config X86_INTERNODE_CACHE_SHIFT
+	int
+	default "12" if X86_VSMP
+	default X86_L1_CACHE_SHIFT
+
 config X86_L1_CACHE_SHIFT
 	int
 	default "4"

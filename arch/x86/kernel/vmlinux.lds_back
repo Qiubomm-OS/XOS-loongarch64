@@ -29,9 +29,9 @@ SECTIONS
 {
 	. = 0x100000;
 	PROVIDE( _start = . );
-	.init.text :
+	.head.text :
 	{
-		*(.init.text)
+		*(.head.text)
 		. = ALIGN(4096);
 	}
 	.init.data :

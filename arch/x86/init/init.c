@@ -102,12 +102,10 @@ void paging_init(void)
 {
 	printk("paging_init start.\n");
 	pagetable_init();
-	printk("@@@@@: 123\n");
 	load_cr3(swapper_pg_dir);
 	printk("load_cr3 complete.\n");
 	__flush_tlb_all();
 	printk("paging_init down.\n");
 	zone_sizes_init();
 	printk("paging_init down.\n");
-	while (1);
 }

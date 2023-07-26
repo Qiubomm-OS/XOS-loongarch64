@@ -9,12 +9,12 @@
 #include <linux/smp.h>
 #include <asm-generic/bitsperlong.h>
 
-extern void __init __no_sanitize_address start_kernel(void);
+extern void __no_sanitize_address start_kernel(void);
 extern void setup_arch(void);
 
 bool early_boot_irqs_disabled;
 
-void __init __no_sanitize_address start_kernel(void)
+void __no_sanitize_address start_kernel(void)
 {
 	char str[] = "xos";
 	// int cpu = smp_processor_id();
