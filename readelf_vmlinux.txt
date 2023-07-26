@@ -1,0 +1,279 @@
+ELF Header:
+  Magic:   7f 45 4c 46 01 01 01 00 00 00 00 00 00 00 00 00 
+  Class:                             ELF32
+  Data:                              2's complement, little endian
+  Version:                           1 (current)
+  OS/ABI:                            UNIX - System V
+  ABI Version:                       0
+  Type:                              EXEC (Executable file)
+  Machine:                           Intel 80386
+  Version:                           0x1
+  Entry point address:               0xc010000c
+  Start of program headers:          52 (bytes into file)
+  Start of section headers:          1201276 (bytes into file)
+  Flags:                             0x0
+  Size of this header:               52 (bytes)
+  Size of program headers:           32 (bytes)
+  Number of program headers:         4
+  Size of section headers:           40 (bytes)
+  Number of section headers:         19
+  Section header string table index: 18
+
+Section Headers:
+  [Nr] Name              Type            Addr     Off    Size   ES Flg Lk Inf Al
+  [ 0]                   NULL            00000000 000000 000000 00      0   0  0
+  [ 1] .text             PROGBITS        c0000000 001000 10b000 00  AX  0   0 4096
+  [ 2] .data             PROGBITS        c010b000 10c000 001000 00  WA  0   0 32
+  [ 3] .data..init_threa PROGBITS        c010c000 10d000 000008 00  WA  0   0  4
+  [ 4] .bss              NOBITS          c010d000 10d008 005000 00  WA  0   0 4096
+  [ 5] .smp_locks        PROGBITS        c0112000 10e000 000024 00   A  0   0  4
+  [ 6] .stab             NOBITS          c0112024 10e024 001fdc 0c  WA  9   0  1
+  [ 7] .data.init_task   PROGBITS        c0114000 10e024 000000 00  WA  0   0  1
+  [ 8] .initcall.init    PROGBITS        c0114000 10e024 000000 00   W  0   0  1
+  [ 9] .stabstr          STRTAB          c0116000 10e024 000000 00   W  0   0  1
+  [10] .debug_line       PROGBITS        00000000 10e024 002b44 00      0   0  1
+  [11] .debug_info       PROGBITS        00000000 110b68 00e8c8 00      0   0  1
+  [12] .debug_abbrev     PROGBITS        00000000 11f430 002548 00      0   0  1
+  [13] .debug_aranges    PROGBITS        00000000 121978 0002c8 00      0   0  8
+  [14] .debug_str        PROGBITS        00000000 121c40 00217d 01  MS  0   0  1
+  [15] .debug_ranges     PROGBITS        00000000 123dbd 000078 00      0   0  1
+  [16] .symtab           SYMTAB          00000000 123e38 000cd0 10     17 131  4
+  [17] .strtab           STRTAB          00000000 124b08 0008a8 00      0   0  1
+  [18] .shstrtab         STRTAB          00000000 1253b0 0000cb 00      0   0  1
+Key to Flags:
+  W (write), A (alloc), X (execute), M (merge), S (strings), I (info),
+  L (link order), O (extra OS processing required), G (group), T (TLS),
+  C (compressed), x (unknown), o (OS specific), E (exclude),
+  p (processor specific)
+
+There are no section groups in this file.
+
+Program Headers:
+  Type           Offset   VirtAddr   PhysAddr   FileSiz MemSiz  Flg Align
+  LOAD           0x001000 0xc0000000 0x00000000 0x10b000 0x10b000 R E 0x1000
+  LOAD           0x10c000 0xc010b000 0x0010b000 0x01008 0x07000 RW  0x1000
+  LOAD           0x10e000 0xc0112000 0x00112000 0x00024 0x02000 RW  0x1000
+  GNU_STACK      0x000000 0x00000000 0x00000000 0x00000 0x00000 RWE 0x10
+
+ Section to Segment mapping:
+  Segment Sections...
+   00     .text 
+   01     .data .data..init_thread_info .bss 
+   02     .smp_locks .stab 
+   03     
+
+There is no dynamic section in this file.
+
+There are no relocations in this file.
+
+The decoding of unwind sections for machine type Intel 80386 is not currently supported.
+
+Symbol table '.symtab' contains 205 entries:
+   Num:    Value  Size Type    Bind   Vis      Ndx Name
+     0: 00000000     0 NOTYPE  LOCAL  DEFAULT  UND 
+     1: c0000000     0 SECTION LOCAL  DEFAULT    1 
+     2: c010b000     0 SECTION LOCAL  DEFAULT    2 
+     3: c010c000     0 SECTION LOCAL  DEFAULT    3 
+     4: c010d000     0 SECTION LOCAL  DEFAULT    4 
+     5: c0112000     0 SECTION LOCAL  DEFAULT    5 
+     6: c0112024     0 SECTION LOCAL  DEFAULT    6 
+     7: c0114000     0 SECTION LOCAL  DEFAULT    7 
+     8: c0114000     0 SECTION LOCAL  DEFAULT    8 
+     9: c0116000     0 SECTION LOCAL  DEFAULT    9 
+    10: 00000000     0 SECTION LOCAL  DEFAULT   10 
+    11: 00000000     0 SECTION LOCAL  DEFAULT   11 
+    12: 00000000     0 SECTION LOCAL  DEFAULT   12 
+    13: 00000000     0 SECTION LOCAL  DEFAULT   13 
+    14: 00000000     0 SECTION LOCAL  DEFAULT   14 
+    15: 00000000     0 SECTION LOCAL  DEFAULT   15 
+    16: 00000000     0 FILE    LOCAL  DEFAULT  ABS arch/x86/kernel/grub_head
+    17: 1badb002     0 NOTYPE  LOCAL  DEFAULT  ABS MBOOT_HEADER_MAGIC
+    18: 00000001     0 NOTYPE  LOCAL  DEFAULT  ABS MBOOT_PAGE_ALIGN
+    19: 00000002     0 NOTYPE  LOCAL  DEFAULT  ABS MBOOT_MEM_INFO
+    20: 00000008     0 NOTYPE  LOCAL  DEFAULT  ABS CODE_SELECTOR
+    21: 00000003     0 NOTYPE  LOCAL  DEFAULT  ABS MBOOT_HEADER_FLAGS
+    22: e4524ffb     0 NOTYPE  LOCAL  DEFAULT  ABS MBOOT_CHECKSUM
+    23: c0100035     0 NOTYPE  LOCAL  DEFAULT    1 stop
+    24: c010003f     0 NOTYPE  LOCAL  DEFAULT    1 next
+    25: 00000000     0 FILE    LOCAL  DEFAULT  ABS boot.c
+    26: c0106100    33 FUNC    LOCAL  DEFAULT    1 test_and_set_bit
+    27: c0100040   128 FUNC    LOCAL  DEFAULT    1 make_gdt_desc
+    28: c01000c0   297 FUNC    LOCAL  DEFAULT    1 page_create
+    29: c01001e9   319 FUNC    LOCAL  DEFAULT    1 gdt_create
+    30: 00000000     0 FILE    LOCAL  DEFAULT  ABS io_delay.c
+    31: 00000000     0 FILE    LOCAL  DEFAULT  ABS setup.c
+    32: c010614a    33 FUNC    LOCAL  DEFAULT    1 test_and_set_bit
+    33: c010616b   217 FUNC    LOCAL  DEFAULT    1 init_biosmap
+    34: c0106244  2025 FUNC    LOCAL  DEFAULT    1 sanitize_e820_map
+    35: c0106a2d   181 FUNC    LOCAL  DEFAULT    1 add_memory_region
+    36: c0106ae2   363 FUNC    LOCAL  DEFAULT    1 copy_e820_map
+    37: c0106c4d   301 FUNC    LOCAL  DEFAULT    1 print_memory_map
+    38: c0106d7a   126 FUNC    LOCAL  DEFAULT    1 setup_memory_region
+    39: c0106df8   233 FUNC    LOCAL  DEFAULT    1 find_max_pfn
+    40: c0106ee1    63 FUNC    LOCAL  DEFAULT    1 find_max_low_pfn
+    41: c0106f20   308 FUNC    LOCAL  DEFAULT    1 register_bootmem_low_page
+    42: c0107054   227 FUNC    LOCAL  DEFAULT    1 setup_memory
+    43: c0107137   206 FUNC    LOCAL  DEFAULT    1 show_memory_map
+    44: 00000000     0 FILE    LOCAL  DEFAULT  ABS main.c
+    45: 00000000     0 FILE    LOCAL  DEFAULT  ABS init_task.c
+    46: 00000000     0 FILE    LOCAL  DEFAULT  ABS debug.c
+    47: 00000000     0 FILE    LOCAL  DEFAULT  ABS print.c
+    48: c0107229    13 FUNC    LOCAL  DEFAULT    1 slow_down_io
+    49: c0107236    24 FUNC    LOCAL  DEFAULT    1 outb_local
+    50: c010724e    32 FUNC    LOCAL  DEFAULT    1 outb
+    51: c010726e    39 FUNC    LOCAL  DEFAULT    1 outb_p
+    52: c0107295   111 FUNC    LOCAL  DEFAULT    1 set_cursor
+    53: c0107304    53 FUNC    LOCAL  DEFAULT    1 flush
+    54: c0107339   353 FUNC    LOCAL  DEFAULT    1 scroll_sceen
+    55: c010749a   364 FUNC    LOCAL  DEFAULT    1 put_char
+    56: 00000000     0 FILE    LOCAL  DEFAULT  ABS init.c
+    57: c010763b    33 FUNC    LOCAL  DEFAULT    1 test_and_set_bit
+    58: c010765c    47 FUNC    LOCAL  DEFAULT    1 constant_test_bit
+    59: c010768b    15 FUNC    LOCAL  DEFAULT    1 virt_to_phys
+    60: c010769a     5 FUNC    LOCAL  DEFAULT    1 pmd_offset
+    61: c0111000     4 OBJECT  LOCAL  DEFAULT    4 totalram_pages
+    62: c0111004     4 OBJECT  LOCAL  DEFAULT    4 totalhigh_pages
+    63: c010769f   501 FUNC    LOCAL  DEFAULT    1 pagetable_init
+    64: c010b850    15 OBJECT  LOCAL  DEFAULT    2 __func__.1601
+    65: c0107894   144 FUNC    LOCAL  DEFAULT    1 zone_sizes_init
+    66: 00000000     0 FILE    LOCAL  DEFAULT  ABS bootmem.c
+    67: c01079c8    29 FUNC    LOCAL  DEFAULT    1 test_and_clear_bit
+    68: c01079e5    33 FUNC    LOCAL  DEFAULT    1 test_and_set_bit
+    69: c0107a06    47 FUNC    LOCAL  DEFAULT    1 constant_test_bit
+    70: c0107a35    30 FUNC    LOCAL  DEFAULT    1 phys_to_virt
+    71: c0107a53   204 FUNC    LOCAL  DEFAULT    1 init_bootmem_core
+    72: c0107b1f   236 FUNC    LOCAL  DEFAULT    1 free_bootmem_core
+    73: c010b8e8    18 OBJECT  LOCAL  DEFAULT    2 __func__.1531
+    74: c0107c0b   305 FUNC    LOCAL  DEFAULT    1 reserve_bootmem_core
+    75: c010b8fc    21 OBJECT  LOCAL  DEFAULT    2 __func__.1544
+    76: c0107d3c  1071 FUNC    LOCAL  DEFAULT    1 __alloc_bootmem_core
+    77: c010b914    21 OBJECT  LOCAL  DEFAULT    2 __func__.1563
+    78: c010b92c    16 OBJECT  LOCAL  DEFAULT    2 __func__.1600
+    79: c010b93c    21 OBJECT  LOCAL  DEFAULT    2 __func__.1608
+    80: 00000000     0 FILE    LOCAL  DEFAULT  ABS numa.c
+    81: c01082e3    33 FUNC    LOCAL  DEFAULT    1 test_and_set_bit
+    82: c0111014    20 OBJECT  LOCAL  DEFAULT    4 contig_bootmem_data
+    83: 00000000     0 FILE    LOCAL  DEFAULT  ABS page_alloc.c
+    84: c0108304    14 FUNC    LOCAL  DEFAULT    1 set_bit
+    85: c0108312    33 FUNC    LOCAL  DEFAULT    1 test_and_set_bit
+    86: c0108333    46 FUNC    LOCAL  DEFAULT    1 set_page_zone
+    87: c010b414    12 OBJECT  LOCAL  DEFAULT    2 zone_names
+    88: c010b420    12 OBJECT  LOCAL  DEFAULT    2 zone_balance_ratio
+    89: c010b42c    12 OBJECT  LOCAL  DEFAULT    2 zone_balance_min
+    90: c010b438    12 OBJECT  LOCAL  DEFAULT    2 zone_balance_max
+    91: c0108361   385 FUNC    LOCAL  DEFAULT    1 build_zonelists
+    92: c010ba24    16 OBJECT  LOCAL  DEFAULT    2 __func__.1548
+    93: c01084e2  1554 FUNC    LOCAL  DEFAULT    1 free_area_init_core
+    94: c010ba10    20 OBJECT  LOCAL  DEFAULT    2 __func__.1571
+    95: 00000000     0 FILE    LOCAL  DEFAULT  ABS memory.c
+    96: c0108b21    33 FUNC    LOCAL  DEFAULT    1 test_and_set_bit
+    97: 00000000     0 FILE    LOCAL  DEFAULT  ABS string.c
+    98: 00000000     0 FILE    LOCAL  DEFAULT  ABS ctype.c
+    99: 00000000     0 FILE    LOCAL  DEFAULT  ABS stdio.c
+   100: c0108cc9    75 FUNC    LOCAL  DEFAULT    1 printk_get_level
+   101: c0108d14    29 FUNC    LOCAL  DEFAULT    1 printk_skip_level
+   102: 00000000     0 FILE    LOCAL  DEFAULT  ABS efi-stub-helper.c
+   103: c0108dff    30 FUNC    LOCAL  DEFAULT    1 efi_guidcmp
+   104: 00000000     0 FILE    LOCAL  DEFAULT  ABS mem.c
+   105: 00000000     0 FILE    LOCAL  DEFAULT  ABS printk.c
+   106: c01091e4    75 FUNC    LOCAL  DEFAULT    1 printk_get_level
+   107: c010922f    29 FUNC    LOCAL  DEFAULT    1 printk_skip_level
+   108: c010927b   319 FUNC    LOCAL  DEFAULT    1 utf8_to_utf32
+   109: 00000000     0 FILE    LOCAL  DEFAULT  ABS vsprintf.c
+   110: c01095fa   101 FUNC    LOCAL  DEFAULT    1 skip_atoi
+   111: c010965f   120 FUNC    LOCAL  DEFAULT    1 put_dec_full4
+   112: c01096d7    90 FUNC    LOCAL  DEFAULT    1 put_dec_helper4
+   113: c0109731   358 FUNC    LOCAL  DEFAULT    1 put_dec
+   114: c0109897   358 FUNC    LOCAL  DEFAULT    1 number
+   115: c010bb4c    16 OBJECT  LOCAL  DEFAULT    2 digits.2361
+   116: c01099fd   107 FUNC    LOCAL  DEFAULT    1 get_flags
+   117: c0109a68    98 FUNC    LOCAL  DEFAULT    1 get_int
+   118: c0109aca   333 FUNC    LOCAL  DEFAULT    1 get_number
+   119: c0109c17   105 FUNC    LOCAL  DEFAULT    1 get_sign
+   120: c0109c80   207 FUNC    LOCAL  DEFAULT    1 utf16s_utf8nlen
+   121: c0109d4f   154 FUNC    LOCAL  DEFAULT    1 utf16_to_utf32
+   122: 00000000     0 FILE    LOCAL  DEFAULT  ABS x86-stub.c
+   123: 00000000     0 FILE    LOCAL  DEFAULT  ABS ns16550a.c
+   124: c010a535     8 FUNC    LOCAL  DEFAULT    1 __raw_readb
+   125: c010a53d    25 FUNC    LOCAL  DEFAULT    1 __raw_writeb
+   126: c010a556    29 FUNC    LOCAL  DEFAULT    1 _inb
+   127: c010a573    33 FUNC    LOCAL  DEFAULT    1 _outb
+   128: c010a594   279 FUNC    LOCAL  DEFAULT    1 real_serial_ns16550a_init
+   129: c010a6ab    87 FUNC    LOCAL  DEFAULT    1 real_serial_ns16550a_putc
+   130: c010a702    64 FUNC    LOCAL  DEFAULT    1 real_serial_ns16550a_getc
+   131: c010816b    52 FUNC    GLOBAL DEFAULT    1 init_bootmem
+   132: c0108c36    58 FUNC    GLOBAL DEFAULT    1 strcpy
+   133: c0111050     4 OBJECT  GLOBAL DEFAULT    4 efi_system_table
+   134: c0103000  4096 OBJECT  GLOBAL DEFAULT    1 pgd
+   135: c0100328    47 FUNC    GLOBAL DEFAULT    1 kern_entry
+   136: c0114000     0 NOTYPE  GLOBAL DEFAULT    6 init_stack
+   137: c010a764    44 FUNC    GLOBAL DEFAULT    1 serial_ns16550a_putc
+   138: c010e064     4 OBJECT  GLOBAL DEFAULT    4 mmu_cr4_features
+   139: c0111044     4 OBJECT  GLOBAL DEFAULT    4 num_mappedpages
+   140: c010a742    34 FUNC    GLOBAL DEFAULT    1 serial_ns16550a_init
+   141: c01081e7   142 FUNC    GLOBAL DEFAULT    1 __alloc_bootmem
+   142: c0107205    36 FUNC    GLOBAL DEFAULT    1 setup_arch
+   143: c0106121    41 FUNC    GLOBAL DEFAULT    1 native_io_delay
+   144: c0111010     4 OBJECT  GLOBAL DEFAULT    4 max_pfn
+   145: c010a7aa    61 FUNC    GLOBAL DEFAULT    1 serial_ns16550a_puts
+   146: c0100038     0 NOTYPE  GLOBAL DEFAULT    1 flush
+   147: c010f000     4 OBJECT  GLOBAL DEFAULT    4 highstart_pfn
+   148: c0111054     4 OBJECT  GLOBAL DEFAULT    4 efi_dxe_table
+   149: c0108b80    73 FUNC    GLOBAL DEFAULT    1 memcpy
+   150: c0107606    53 FUNC    GLOBAL DEFAULT    1 print_str
+   151: c010e308     4 OBJECT  GLOBAL DEFAULT    4 cursor_y
+   152: c010d000     4 OBJECT  GLOBAL DEFAULT    4 early_boot_irqs_disabled
+   153: c0111008     4 OBJECT  GLOBAL DEFAULT    4 max_low_pfn
+   154: c0109de9  1868 FUNC    GLOBAL DEFAULT    1 vsnprintf
+   155: c011104c     4 OBJECT  GLOBAL DEFAULT    4 efi_novamap
+   156: c0108af4    45 FUNC    GLOBAL DEFAULT    1 free_area_init
+   157: c010a790    26 FUNC    GLOBAL DEFAULT    1 serial_ns16550a_getc
+   158: c010b560     4 OBJECT  GLOBAL DEFAULT    2 efi_loglevel
+   159: c010d040  4096 OBJECT  GLOBAL DEFAULT    4 empty_zero_page
+   160: c0104000  4096 OBJECT  GLOBAL DEFAULT    1 pte
+   161: c0111048     4 OBJECT  GLOBAL DEFAULT    4 high_memory
+   162: c0110000  4096 OBJECT  GLOBAL DEFAULT    4 swapper_pg_dir
+   163: c0108fef   501 FUNC    GLOBAL DEFAULT    1 efi_get_memory_map
+   164: c010604b   181 FUNC    GLOBAL DEFAULT    1 panic_spin
+   165: c0108e9d   338 FUNC    GLOBAL DEFAULT    1 efi_exit_boot_services
+   166: c0108ca1    40 FUNC    GLOBAL DEFAULT    1 strnlen
+   167: c0106000    21 FUNC    GLOBAL DEFAULT    1 native_save_fl
+   168: c010e060     1 OBJECT  GLOBAL DEFAULT    4 ignore_irq13
+   169: c0102000     4 OBJECT  GLOBAL DEFAULT    1 glb_mboot_ptr
+   170: c0111028     4 OBJECT  GLOBAL DEFAULT    4 pgdat_list
+   171: c010b000     8 OBJECT  GLOBAL DEFAULT    2 init_task
+   172: c0101000     0 NOTYPE  GLOBAL DEFAULT    1 stack_start
+   173: c011102c    12 OBJECT  GLOBAL DEFAULT    4 zone_table
+   174: c010b0e0   820 OBJECT  GLOBAL DEFAULT    2 contig_page_data
+   175: c010c000     8 OBJECT  GLOBAL DEFAULT    3 init_thread_info
+   176: c0111040     4 OBJECT  GLOBAL DEFAULT    4 num_physpages
+   177: c0111058     2 OBJECT  GLOBAL DEFAULT    4 divisor
+   178: c0108bc9   109 FUNC    GLOBAL DEFAULT    1 memcmp
+   179: c0108e1d   128 FUNC    GLOBAL DEFAULT    1 get_efi_config_table
+   180: c0108d31   206 FUNC    GLOBAL DEFAULT    1 printk
+   181: c010b460   256 OBJECT  GLOBAL DEFAULT    2 _ctype
+   182: c0108b42    62 FUNC    GLOBAL DEFAULT    1 memset
+   183: c0106015    54 FUNC    GLOBAL DEFAULT    1 start_kernel
+   184: c011100c     4 OBJECT  GLOBAL DEFAULT    4 min_low_pfn
+   185: c010b0c0     4 OBJECT  GLOBAL DEFAULT    2 numnodes
+   186: c01093ba   317 FUNC    GLOBAL DEFAULT    1 efi_puts
+   187: c010e080   644 OBJECT  GLOBAL DEFAULT    4 e820
+   188: c0105000   644 OBJECT  GLOBAL DEFAULT    1 biosmap
+   189: c011103c     4 OBJECT  GLOBAL DEFAULT    4 max_mapnr
+   190: c0107924   164 FUNC    GLOBAL DEFAULT    1 paging_init
+   191: c010d020     4 OBJECT  GLOBAL DEFAULT    4 kern_stack_top
+   192: c010e304     4 OBJECT  GLOBAL DEFAULT    4 cursor_x
+   193: c0116000     0 NOTYPE  GLOBAL DEFAULT    6 _end
+   194: c010924c    47 FUNC    GLOBAL DEFAULT    1 efi_char16_puts
+   195: c010b020   144 OBJECT  GLOBAL DEFAULT    2 boot_cpu_data
+   196: c01081c3    36 FUNC    GLOBAL DEFAULT    1 reserve_bootmem
+   197: c010000c     0 NOTYPE  GLOBAL DEFAULT    1 start
+   198: c010819f    36 FUNC    GLOBAL DEFAULT    1 free_bootmem
+   199: c0108c70    49 FUNC    GLOBAL DEFAULT    1 strlen
+   200: c0108275   110 FUNC    GLOBAL DEFAULT    1 __alloc_bootmem_node
+   201: c01094f7   259 FUNC    GLOBAL DEFAULT    1 efi_printk
+   202: c0111038     4 OBJECT  GLOBAL DEFAULT    4 mem_map
+   203: c010f004     4 OBJECT  GLOBAL DEFAULT    4 highend_pfn
+   204: c010e040     4 OBJECT  GLOBAL DEFAULT    4 io_delay_type
+
+No version information found in this file.

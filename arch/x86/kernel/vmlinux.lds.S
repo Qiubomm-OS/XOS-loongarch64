@@ -1,21 +1,15 @@
 ENTRY(start)
 SECTIONS
 {
-	. = 0x100000;
 	PROVIDE( _start = . );
-	.init.text :
-	{
-		*(.init.text)
-		. = ALIGN(4096);
-	}
-	.init.data :
-	{
-		*(.init.data)
-		. = ALIGN(8192);
-	}
 	. += 0xC0000000;
 	.text : AT(ADDR(.text) - 0xC0000000)
 	{
+		. += 0x100000;
+		*(.init.text)
+		. = ALIGN(4096);
+		*(.init.data)
+		. = ALIGN(8192);
 		*(.text)
 		. = ALIGN(4096);
 	}
