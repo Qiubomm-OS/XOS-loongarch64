@@ -3,17 +3,28 @@ SECTIONS
 {
 	. = 0x100000;
 	PROVIDE( _start = . );
-	.init.text :
+	.head.text :
+	{
+		*(.head.text)
+		. = ALIGN(4096);
+	}
+	.head.data :
+	{
+		*(.head.data)
+		. = ALIGN(8192);
+	}
+	. += 0xC0000000;
+	.init.text : AT(ADDR(.init.text) - 0xC0000000)
 	{
 		*(.init.text)
 		. = ALIGN(4096);
 	}
-	.init.data :
+	.init.data : AT(ADDR(.init.data) - 0xC0000000)
 	{
 		*(.init.data)
+		*(.init.rodata)
 		. = ALIGN(8192);
 	}
-	. += 0xC0000000;
 	.text : AT(ADDR(.text) - 0xC0000000)
 	{
 		*(.text)

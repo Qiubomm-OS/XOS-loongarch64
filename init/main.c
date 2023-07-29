@@ -14,7 +14,7 @@ extern void setup_arch(void);
 
 bool early_boot_irqs_disabled;
 
-void __no_sanitize_address start_kernel(void)
+void __init __no_sanitize_address start_kernel(void)
 {
 	char str[] = "xos";
 	// int cpu = smp_processor_id();

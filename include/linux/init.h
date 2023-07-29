@@ -4,6 +4,7 @@
 
 #include <linux/compiler_attributes.h>
 
+#define __head		__section(".head.text")
 #define __init		__section(".init.text") __cold
 #define __initdata	__section(".init.data")
 #define __initconst	__section(".init.rodata")

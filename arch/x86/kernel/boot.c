@@ -21,8 +21,8 @@ extern void *flush;
 // pte_t pte0[1024] __attribute__((__aligned__(PAGE_SIZE))) __attribute__ ((__section__ (".init.data")));   // 0 - 4M
 // pte_t pte1[1024] __attribute__((__aligned__(PAGE_SIZE))) __attribute__ ((__section__ (".init.data")));   // 4 - 8M
 
-pgd_t pgd[1024] __attribute__((__aligned__(PAGE_SIZE))) __attribute__ ((__section__ (".init.data")));
-pte_t pte[1024] __attribute__ ((__section__ (".init.data")));
+pgd_t pgd[1024] __attribute__((__aligned__(PAGE_SIZE))) __attribute__ ((__section__ (".head.data")));
+pte_t pte[1024] __attribute__ ((__section__ (".head.data")));
 
 unsigned long empty_zero_page[1024];
 
@@ -30,7 +30,7 @@ unsigned long empty_zero_page[1024];
 // pte_t pte[1024];
 
 /* 创建gdt描述符 */
-static struct gdt_desc __init make_gdt_desc(uint32_t* desc_addr, uint32_t limit, uint8_t attr_low, uint8_t attr_high) {
+static struct gdt_desc __head make_gdt_desc(uint32_t* desc_addr, uint32_t limit, uint8_t attr_low, uint8_t attr_high) {
 	uint32_t desc_base = (uint32_t)desc_addr;
 	struct gdt_desc desc;
 	desc.limit_low_word = limit & 0x0000ffff;
@@ -42,7 +42,7 @@ static struct gdt_desc __init make_gdt_desc(uint32_t* desc_addr, uint32_t limit,
 	return desc;
 }
 
-static void __init page_create(void)/* reate page*/
+static void __head page_create(void)/* reate page*/
 {
 	uint32_t phy_addr = 0;
 	uint32_t cr0;
@@ -138,7 +138,7 @@ static void __init page_create(void)/* reate page*/
 // }
 
 
-static void __init gdt_create(void)
+static void __head gdt_create(void)
 {
 	uint64_t gdt_operand = ((8 * 6 - 1) | ((uint64_t)(uint32_t)0x900 << 16));   // 7个描述符大小
 	/* gdt段基址为0x900,把tss放到第4个位置,也就是0x900+0x20的位置 */
@@ -159,8 +159,8 @@ static void __init gdt_create(void)
 	asm volatile ("mov %0, %%ax;mov %%ax, %%ss" : : "i" (SELECTOR_K_DATA));
 }
 
-extern void __init kern_entry(void);
-void __init kern_entry(void)
+extern void __head kern_entry(void);
+void __head kern_entry(void)
 {
 	uint32_t kern_stack_top;
 
