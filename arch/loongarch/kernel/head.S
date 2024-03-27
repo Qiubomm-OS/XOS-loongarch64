@@ -9,6 +9,7 @@
 #include <asm/thread_info.h>
 #include <asm/stackframe.h>
 
+#ifndef CONFIG_2K1000LA
 	.macro	__EFI_PE_HEADER
 	.long	PE_MAGIC
 .Lcoff_header:
@@ -116,36 +117,40 @@ _head:
 pe_header:
 	__EFI_PE_HEADER
 
-SYM_DATA(kernel_asize, .long _end - _text);
-SYM_DATA(kernel_fsize, .long _edata - _text);
-SYM_DATA(kernel_offset, .long kernel_offset - _text);
+#endif
 
-	__REF
+	.section ".head.text","ax"
 
 	.align 12
 
 SYM_CODE_START(kernel_entry)			# kernel entry point
 
-	/* Config direct window and set PG */
+	/** 
+	 * 配置直接映射窗口
+	 * 设置CRMD.PG位
+	 */
 	li.d		t0, CSR_DMW0_INIT	# UC, PLV0, 0x8000 xxxx xxxx xxxx
 	csrwr		t0, LOONGARCH_CSR_DMWIN0
-	li.d		t0, CSR_DMW1_INIT	# CA, PLV0, 0x9000 xxxx xxxx xxxx
+	li.d		t0, CSR_DMW1_INIT	# 一致可缓存（Coherent Cached，CA）存储访问类型，PLV0下可以使用该窗口的配置进行直接映射地址翻译，地址窗口为0x9000 xxxx xxxx xxxx
 	csrwr		t0, LOONGARCH_CSR_DMWIN1
+
+	// JUMP_VIRT_ADDR	t0, t1
+
+	/* Enable PG */
+	li.w		t0, 0xb0		# 1011 0000, PLV=0, IE=0, PG=1, DATF=1
+	csrwr		t0, LOONGARCH_CSR_CRMD
+	li.w		t0, 0x04		# 0000 0100, PLV=0, PIE=1, PWE=0
+	csrwr		t0, LOONGARCH_CSR_PRMD
+	li.w		t0, 0x00		# 0000 0000, FPE=0, SXE=0, ASXE=0, BTE=0, 不使用扩展
+	csrwr		t0, LOONGARCH_CSR_EUEN
 
 	/* We might not get launched at the address the kernel is linked to,
 	   so we jump there.  */
 	la.abs		t0, 0f
-	jr		t0
+	jirl		zero, t0, 0
 0:
-	/* Enable PG */
-	li.w		t0, 0xb0		# PLV=0, IE=0, PG=1
-	csrwr		t0, LOONGARCH_CSR_CRMD
-	li.w		t0, 0x04		# PLV=0, PIE=1, PWE=0
-	csrwr		t0, LOONGARCH_CSR_PRMD
-	li.w		t0, 0x00		# FPE=0, SXE=0, ASXE=0, BTE=0
-	csrwr		t0, LOONGARCH_CSR_EUEN
 
-	la.pcrel	t0, __bss_start		# clear .bss
+	la.pcrel	t0, __bss_start		# 清空.bss段
 	st.d		zero, t0, 0
 	la.pcrel	t1, __bss_stop - LONGSIZE
 1:
@@ -153,8 +158,11 @@ SYM_CODE_START(kernel_entry)			# kernel entry point
 	st.d		zero, t0, 0
 	bne		t0, t1, 1b
 
+	/**
+	 * 保存固件传递的参数
+	 */
 	la.pcrel	t0, fw_arg0
-	st.d		a0, t0, 0		# firmware arguments
+	st.d		a0, t0, 0
 	la.pcrel	t0, fw_arg1
 	st.d		a1, t0, 0
 	la.pcrel	t0, fw_arg2
@@ -167,9 +175,11 @@ SYM_CODE_START(kernel_entry)			# kernel entry point
 
 	la.pcrel	tp, init_thread_union
 	/* Set the SP after an empty pt_regs.  */
-	PTR_LI		sp, (THREAD_SIZE - PT_SIZE)
-	PTR_ADD		sp, sp, tp
-	set_saved_sp	sp, t0, t1
+	li.d		sp, (0x00004000 - PT_SIZE)
+	add.d		sp, sp, tp
+	/* set_saved_sp	sp, t0, t1 */
+	la.abs		t0, kernelsp
+	st.d		sp, t0, 0
 
 	bl		start_kernel
 	/* ASM_BUG() */
@@ -177,3 +187,7 @@ SYM_CODE_START(kernel_entry)			# kernel entry point
 SYM_CODE_END(kernel_entry)
 
 SYM_ENTRY(kernel_entry_end, SYM_L_GLOBAL, SYM_A_NONE)
+
+SYM_DATA(kernel_asize, .long _end - _text);
+SYM_DATA(kernel_fsize, .long _edata - _text);
+SYM_DATA(kernel_offset, .long kernel_offset - _text);
